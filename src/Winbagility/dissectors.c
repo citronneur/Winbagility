@@ -18,48 +18,48 @@
 #define KDBG_HEADER_OWNER_TAG 0x4742444b
 
 WINDOWS_PROFIL_T WindowsProfils[] = {
-	{
-		"3844DBB920174967BE7AA4A2C20430FA2",
-		"7601.17514.amd64fre.win7sp1_rtm.101119-1850",
-		0x00000000002B11E0,
-		0x00000000002B1108,
-		0x00000000002194B2,
-		0x00000000001F10A0,
-		0x00000000001F1068,
-		0x000000000007D3C0,
-		0x0000000000000000,
-		0x0000000000000000,
-		true,
-		false
-	},
-	{
-		"C68EE22FDCF6477895C54A862BE165671",
-		"10240.16384.amd64fre.th1.150709-1700",
-		0x00000000003c5630,
-		0x00000000003c54a8,
-		0x0000000000340f68,
-		0x0000000000309b20,
-		0x0000000000309e80,
-		0x0000000000154800,
-		0x0000000000000000,
-		0x0000000000000000,
-		false,
-		false
-	},
-	{
-		"3BAEE2762F6442089EF8B926DDC8DBA61",
-		"9600.17736.amd64fre.winblue_r9.150322-1500",
-		0x0000000000363A30,
-		0x0000000000363538,
-		0x00000000002B2211,
-		0x00000000002A6530,
-		0x00000000002A6E60,
-		0x0000000000159C00,
-		0x0000000000000000,
-		0x0000000000000000,
-		false,
-		false
-	}
+    {
+        "3844DBB920174967BE7AA4A2C20430FA2",
+        "7601.17514.amd64fre.win7sp1_rtm.101119-1850",
+        0x00000000002B11E0,
+        0x00000000002B1108,
+        0x00000000002194B2,
+        0x00000000001F10A0,
+        0x00000000001F1068,
+        0x000000000007D3C0,
+        0x0000000000000000,
+        0x0000000000000000,
+        true,
+        false
+    },
+    {
+        "C68EE22FDCF6477895C54A862BE165671",
+        "10240.16384.amd64fre.th1.150709-1700",
+        0x00000000003c5630,
+        0x00000000003c54a8,
+        0x0000000000340f68,
+        0x0000000000309b20,
+        0x0000000000309e80,
+        0x0000000000154800,
+        0x0000000000000000,
+        0x0000000000000000,
+        false,
+        false
+    },
+    {
+        "3BAEE2762F6442089EF8B926DDC8DBA61",
+        "9600.17736.amd64fre.winblue_r9.150322-1500",
+        0x0000000000363A30,
+        0x0000000000363538,
+        0x00000000002B2211,
+        0x00000000002A6530,
+        0x00000000002A6E60,
+        0x0000000000159C00,
+        0x0000000000000000,
+        0x0000000000000000,
+        false,
+        false
+    }
 };
 
 
@@ -219,7 +219,7 @@ __inline uint64_t uncipherData(uint64_t Data, uint64_t KiWaitNever, uint64_t KiW
     Data = Data^KiWaitNever;
     Data = _rotl64(Data, KiWaitNever & 0xFF);
     Data = Data^KdpDataBlockEncoded;
-	Data = _byteswap_uint64(Data);
+    Data = _byteswap_uint64(Data);
     Data = Data^KiWaitAlways;
     return Data;
 }
@@ -227,71 +227,71 @@ __inline uint64_t uncipherData(uint64_t Data, uint64_t KiWaitNever, uint64_t KiW
 
 bool FindKDBG(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, WINDOWS_PROFIL_T *pWindowsProfil)
 {
-	//Compute KiDivideErrorFault address
-	uint64_t v_Idtrb;
-	uint16_t Offset;
-	uint64_t Base;
-	uint64_t v_KdDebuggerDataBlock;
-	pWinbagilityCtx->pfnReadRegister(pWinbagilityCtx->pUserHandle, 0, FDP_IDTRB_REGISTER, &v_Idtrb);
-	printf("Idtrb %llx\n", v_Idtrb);
-	if (v_Idtrb & 0xFFFFFFFF00000000) {
-		//x64
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Offset, sizeof(Offset), v_Idtrb);
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Base, sizeof(Base), v_Idtrb + 4);
-		uint64_t v_KiDivideErrorFault = (Base & 0xFFFFFFFFFFFF0000) | Offset;
-		printf("v_KiDivideErrorFault : %llx\n", v_KiDivideErrorFault);
+    //Compute KiDivideErrorFault address
+    uint64_t v_Idtrb;
+    uint16_t Offset;
+    uint64_t Base;
+    uint64_t v_KdDebuggerDataBlock;
+    pWinbagilityCtx->pfnReadRegister(pWinbagilityCtx->pUserHandle, 0, FDP_IDTRB_REGISTER, &v_Idtrb);
+    printf("Idtrb %llx\n", v_Idtrb);
+    if (v_Idtrb & 0xFFFFFFFF00000000) {
+        //x64
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Offset, sizeof(Offset), v_Idtrb);
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Base, sizeof(Base), v_Idtrb + 4);
+        uint64_t v_KiDivideErrorFault = (Base & 0xFFFFFFFFFFFF0000) | Offset;
+        printf("v_KiDivideErrorFault : %llx\n", v_KiDivideErrorFault);
 
-		uint64_t v_KernBase = v_KiDivideErrorFault - pWindowsProfil->KiDivideErrorFaultOffset;
-		printf("v_KernBase : %llx\n", v_KernBase);
-		uint64_t v_KiWaitAlways = v_KernBase + pWindowsProfil->KiWaitAlwaysOffset;
-		printf("v_KiWaitAlways : %llx\n", v_KiWaitAlways);
-		uint64_t v_KiWaitNever = v_KernBase + pWindowsProfil->KiWaitNeverOffset;
-		printf("v_KiWaitNever : %llx\n", v_KiWaitNever);
-		uint64_t v_KdpDataBlockEncoded = v_KernBase + pWindowsProfil->KdpDataBlockEncodedOffset;
-		printf("v_KdpDataBlockEncoded : %llx\n", v_KdpDataBlockEncoded);
-		v_KdDebuggerDataBlock = v_KernBase + pWindowsProfil->KdDebuggerDataBlockOffset;
-		printf("v_KdDebuggerDataBlock : %llx\n", v_KdDebuggerDataBlock);
+        uint64_t v_KernBase = v_KiDivideErrorFault - pWindowsProfil->KiDivideErrorFaultOffset;
+        printf("v_KernBase : %llx\n", v_KernBase);
+        uint64_t v_KiWaitAlways = v_KernBase + pWindowsProfil->KiWaitAlwaysOffset;
+        printf("v_KiWaitAlways : %llx\n", v_KiWaitAlways);
+        uint64_t v_KiWaitNever = v_KernBase + pWindowsProfil->KiWaitNeverOffset;
+        printf("v_KiWaitNever : %llx\n", v_KiWaitNever);
+        uint64_t v_KdpDataBlockEncoded = v_KernBase + pWindowsProfil->KdpDataBlockEncodedOffset;
+        printf("v_KdpDataBlockEncoded : %llx\n", v_KdpDataBlockEncoded);
+        v_KdDebuggerDataBlock = v_KernBase + pWindowsProfil->KdDebuggerDataBlockOffset;
+        printf("v_KdDebuggerDataBlock : %llx\n", v_KdDebuggerDataBlock);
 
-		//Retrieve keys value
-		if (pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-			0,
-			(uint8_t*)&pWinbagilityCtx->KiWaitNever,
-			sizeof(pWinbagilityCtx->KiWaitNever),
-			v_KiWaitNever) == false) {
-			return false;
-		}
-		printf("keys->KiWaitNever : %llx\n", pWinbagilityCtx->KiWaitNever);
+        //Retrieve keys value
+        if (pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+            0,
+            (uint8_t*)&pWinbagilityCtx->KiWaitNever,
+            sizeof(pWinbagilityCtx->KiWaitNever),
+            v_KiWaitNever) == false) {
+            return false;
+        }
+        printf("keys->KiWaitNever : %llx\n", pWinbagilityCtx->KiWaitNever);
 
-		if (pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-			0,
-			(uint8_t*)&pWinbagilityCtx->KiWaitAlways,
-			sizeof(pWinbagilityCtx->KiWaitAlways),
-			v_KiWaitAlways) == false) {
-			return false;
-		}
-		printf("keys->KiWaitAlways : %llx\n", pWinbagilityCtx->KiWaitAlways);
-		pWinbagilityCtx->KdpDataBlockEncoded = v_KdpDataBlockEncoded;
-		printf("keys->KdpDataBlockEncoded : %llx\n", pWinbagilityCtx->KdpDataBlockEncoded);
-		pWinbagilityCtx->v_KDBG = v_KdDebuggerDataBlock;
-	}
-	else {
-		//x86
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Offset, sizeof(Offset), v_Idtrb);
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Base, sizeof(Base), v_Idtrb + 4);
-		uint64_t v_KiTrap00 = (Base & 0xFFFF0000) | Offset;
-		printf("v_KiTrap00 : %llx\n", v_KiTrap00);
+        if (pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+            0,
+            (uint8_t*)&pWinbagilityCtx->KiWaitAlways,
+            sizeof(pWinbagilityCtx->KiWaitAlways),
+            v_KiWaitAlways) == false) {
+            return false;
+        }
+        printf("keys->KiWaitAlways : %llx\n", pWinbagilityCtx->KiWaitAlways);
+        pWinbagilityCtx->KdpDataBlockEncoded = v_KdpDataBlockEncoded;
+        printf("keys->KdpDataBlockEncoded : %llx\n", pWinbagilityCtx->KdpDataBlockEncoded);
+        pWinbagilityCtx->v_KDBG = v_KdDebuggerDataBlock;
+    }
+    else {
+        //x86
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Offset, sizeof(Offset), v_Idtrb);
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle, 0, (uint8_t*)&Base, sizeof(Base), v_Idtrb + 4);
+        uint64_t v_KiTrap00 = (Base & 0xFFFF0000) | Offset;
+        printf("v_KiTrap00 : %llx\n", v_KiTrap00);
 
-		printf("%llx\n", pWindowsProfil->KiTrap00Offset);
-		uint64_t v_KernBase = v_KiTrap00 - pWindowsProfil->KiTrap00Offset;
-		printf("v_KernBase : %llx\n", v_KernBase);
-		pWinbagilityCtx->KdpDebuggerDataListHead = v_KernBase + pWindowsProfil->KdpDebuggerDataListHeadOffset;
-		v_KdDebuggerDataBlock = 
-		pWinbagilityCtx->v_KDBG = v_KernBase + pWindowsProfil->KdDebuggerDataBlockOffset;
-		printf("v_KdDebuggerDataBlock : %llx\n", pWinbagilityCtx->v_KDBG);
+        printf("%llx\n", pWindowsProfil->KiTrap00Offset);
+        uint64_t v_KernBase = v_KiTrap00 - pWindowsProfil->KiTrap00Offset;
+        printf("v_KernBase : %llx\n", v_KernBase);
+        pWinbagilityCtx->KdpDebuggerDataListHead = v_KernBase + pWindowsProfil->KdpDebuggerDataListHeadOffset;
+        v_KdDebuggerDataBlock = 
+        pWinbagilityCtx->v_KDBG = v_KernBase + pWindowsProfil->KdDebuggerDataBlockOffset;
+        printf("v_KdDebuggerDataBlock : %llx\n", pWinbagilityCtx->v_KDBG);
 
-		pWindowsProfil->bClearKdDebuggerDataBlock = true;
-		pWindowsProfil->bIsX86 = true;
-	}
+        pWindowsProfil->bClearKdDebuggerDataBlock = true;
+        pWindowsProfil->bIsX86 = true;
+    }
 
     
     //Retrieve KDBG
@@ -309,7 +309,7 @@ bool FindKDBG(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, WINDOWS_PROFIL_T *pWindows
     }
     else{
         //Uncipher KDBG
-		for (int i = 0; i < sizeof(KDDEBUGGER_DATA64) / sizeof(uint64_t); i++) {
+        for (int i = 0; i < sizeof(KDDEBUGGER_DATA64) / sizeof(uint64_t); i++) {
             uint64_t tmpEncodedData = ((uint64_t*)&pWinbagilityCtx->EncodedKDBG)[i];
             ((uint64_t*)&pWinbagilityCtx->KDBG)[i] = uncipherData(tmpEncodedData, pWinbagilityCtx->KiWaitNever, pWinbagilityCtx->KiWaitAlways, pWinbagilityCtx->KdpDataBlockEncoded);
         }
@@ -326,51 +326,51 @@ bool FindKDBG(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, WINDOWS_PROFIL_T *pWindows
 
 WINDOWS_PROFIL_T* CreateWindowsProfileFromPdbFile(char *pPdbFilePath)
 {
-	PDB_PARSER_T PdbParserHandle;
+    PDB_PARSER_T PdbParserHandle;
 
-	if (PdbOpenPdb(&PdbParserHandle, pPdbFilePath)){
-		uint64_t off_KiWaitAlways = 0;
-		uint64_t off_KiWaitNever = 0;
-		uint64_t off_KdpDataBlockEncoded = 0;
-		uint64_t off_KdDebuggerDataBlock = 0;
-		uint64_t off_KdVersionBlock = 0;
-		uint64_t off_KiDivideErrorFault = 0;
-		uint64_t off_KiTrap00 = 0;
-		uint64_t off_KdpDebuggerDataListHead = 0;
+    if (PdbOpenPdb(&PdbParserHandle, pPdbFilePath)){
+        uint64_t off_KiWaitAlways = 0;
+        uint64_t off_KiWaitNever = 0;
+        uint64_t off_KdpDataBlockEncoded = 0;
+        uint64_t off_KdDebuggerDataBlock = 0;
+        uint64_t off_KdVersionBlock = 0;
+        uint64_t off_KiDivideErrorFault = 0;
+        uint64_t off_KiTrap00 = 0;
+        uint64_t off_KdpDebuggerDataListHead = 0;
 
-		PdbGetSymbolsRVA(&PdbParserHandle, "KiWaitAlways", &off_KiWaitAlways);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KiWaitNever", &off_KiWaitNever);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KdpDataBlockEncoded", &off_KdpDataBlockEncoded);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KdDebuggerDataBlock", &off_KdDebuggerDataBlock);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KdVersionBlock", &off_KdVersionBlock);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KiDivideErrorFault", &off_KiDivideErrorFault);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KiTrap00", &off_KiTrap00);
-		PdbGetSymbolsRVA(&PdbParserHandle, "KdpDebuggerDataListHead", &off_KdpDebuggerDataListHead);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KiWaitAlways", &off_KiWaitAlways);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KiWaitNever", &off_KiWaitNever);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KdpDataBlockEncoded", &off_KdpDataBlockEncoded);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KdDebuggerDataBlock", &off_KdDebuggerDataBlock);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KdVersionBlock", &off_KdVersionBlock);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KiDivideErrorFault", &off_KiDivideErrorFault);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KiTrap00", &off_KiTrap00);
+        PdbGetSymbolsRVA(&PdbParserHandle, "KdpDebuggerDataListHead", &off_KdpDebuggerDataListHead);
 
-		//todo remove malloc !
+        //todo remove malloc !
         WINDOWS_PROFIL_T *pCurrentWindowsProfil = (WINDOWS_PROFIL_T*)malloc(sizeof(WINDOWS_PROFIL_T));
 
         pCurrentWindowsProfil->pGUID = "{TODO}";
-		pCurrentWindowsProfil->pVersionName = "TODO"; //nt!NtBuildLabEx
-		pCurrentWindowsProfil->KiWaitAlwaysOffset = off_KiWaitAlways;
-		pCurrentWindowsProfil->KiWaitNeverOffset = off_KiWaitNever;
-		pCurrentWindowsProfil->KdpDataBlockEncodedOffset = off_KdpDataBlockEncoded;
-		pCurrentWindowsProfil->KdDebuggerDataBlockOffset = off_KdDebuggerDataBlock;
-		pCurrentWindowsProfil->KdVersionBlockOffset = off_KdVersionBlock;
-		pCurrentWindowsProfil->KiDivideErrorFaultOffset = off_KiDivideErrorFault;
-		pCurrentWindowsProfil->KiTrap00Offset = off_KiTrap00;
-		pCurrentWindowsProfil->KdpDebuggerDataListHeadOffset = off_KdpDebuggerDataListHead;
-		pCurrentWindowsProfil->bClearKdDebuggerDataBlock = true;
+        pCurrentWindowsProfil->pVersionName = "TODO"; //nt!NtBuildLabEx
+        pCurrentWindowsProfil->KiWaitAlwaysOffset = off_KiWaitAlways;
+        pCurrentWindowsProfil->KiWaitNeverOffset = off_KiWaitNever;
+        pCurrentWindowsProfil->KdpDataBlockEncodedOffset = off_KdpDataBlockEncoded;
+        pCurrentWindowsProfil->KdDebuggerDataBlockOffset = off_KdDebuggerDataBlock;
+        pCurrentWindowsProfil->KdVersionBlockOffset = off_KdVersionBlock;
+        pCurrentWindowsProfil->KiDivideErrorFaultOffset = off_KiDivideErrorFault;
+        pCurrentWindowsProfil->KiTrap00Offset = off_KiTrap00;
+        pCurrentWindowsProfil->KdpDebuggerDataListHeadOffset = off_KdpDebuggerDataListHead;
+        pCurrentWindowsProfil->bClearKdDebuggerDataBlock = true;
 
-		PdbClose(&PdbParserHandle);
+        PdbClose(&PdbParserHandle);
 
-		return pCurrentWindowsProfil;
-	}
-	else{
-		printf("Failed to open ntkrnlmp.pdb\n");
-	}
+        return pCurrentWindowsProfil;
+    }
+    else{
+        printf("Failed to open ntkrnlmp.pdb\n");
+    }
 
-	return NULL;
+    return NULL;
 }
 
 typedef struct SEARCH_WINDOWS_PROFIL_T_{
@@ -382,23 +382,23 @@ bool TestPdbFile(void *pUserHandle, char *pFilePath)
 {
     SEARCH_WINDOWS_PROFIL_T* pSearchWindowsProfil = (SEARCH_WINDOWS_PROFIL_T*)pUserHandle;
 
-	if (strlen(pFilePath) < 3) {
-		return false;
-	}
+    if (strlen(pFilePath) < 3) {
+        return false;
+    }
 
-	//Check file extension
-	char *pExtension = pFilePath + strlen(pFilePath) - 3;
-	if (strcmp(pExtension, "pdb") != 0) {
-		return false;
-	}
+    //Check file extension
+    char *pExtension = pFilePath + strlen(pFilePath) - 3;
+    if (strcmp(pExtension, "pdb") != 0) {
+        return false;
+    }
 
     printf("######################################\n");
     printf("Trying Windows profil from : %s\n", pFilePath);
 
     pSearchWindowsProfil->pCurrentWindowsProfil = CreateWindowsProfileFromPdbFile(pFilePath);
     if (pSearchWindowsProfil->pCurrentWindowsProfil != NULL){
-		//Trying with encodeded KDBG...
-		pSearchWindowsProfil->pCurrentWindowsProfil->bClearKdDebuggerDataBlock = false;
+        //Trying with encodeded KDBG...
+        pSearchWindowsProfil->pCurrentWindowsProfil->bClearKdDebuggerDataBlock = false;
         if (FindKDBG(pSearchWindowsProfil->pWinbagilityCtx, pSearchWindowsProfil->pCurrentWindowsProfil) == true){
             return true;
         }
@@ -441,7 +441,7 @@ bool InitialAnalysis(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
 
     //Try with PDB from _NT_SYMBOLS_PATH
     if (pCurrentWindowsProfil == NULL){
-		char *pSymbolsDirectory = NULL;
+        char *pSymbolsDirectory = NULL;
         //Get Symbol Directory... x64
         pSymbolsDirectory = GetSymbolsDirectory();
         if (pSymbolsDirectory != NULL){
@@ -458,21 +458,21 @@ bool InitialAnalysis(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
             }
         }
 
-		//Get Symbol Directory... x86
-		pSymbolsDirectory = GetSymbolsDirectory();
-		if (pSymbolsDirectory != NULL) {
-			//Concat 
-			char NtkrnlmpSymbolsDirectory[MAX_PATH];
-			sprintf_s(NtkrnlmpSymbolsDirectory, sizeof(NtkrnlmpSymbolsDirectory), "%s\\ntkrpamp.pdb\\", pSymbolsDirectory);
+        //Get Symbol Directory... x86
+        pSymbolsDirectory = GetSymbolsDirectory();
+        if (pSymbolsDirectory != NULL) {
+            //Concat 
+            char NtkrnlmpSymbolsDirectory[MAX_PATH];
+            sprintf_s(NtkrnlmpSymbolsDirectory, sizeof(NtkrnlmpSymbolsDirectory), "%s\\ntkrpamp.pdb\\", pSymbolsDirectory);
 
-			SEARCH_WINDOWS_PROFIL_T SearchWindowsProfil;
-			SearchWindowsProfil.pWinbagilityCtx = pWinbagilityCtx;
-			SearchWindowsProfil.pCurrentWindowsProfil = NULL;
+            SEARCH_WINDOWS_PROFIL_T SearchWindowsProfil;
+            SearchWindowsProfil.pWinbagilityCtx = pWinbagilityCtx;
+            SearchWindowsProfil.pCurrentWindowsProfil = NULL;
 
-			if (ReccurseFile(NtkrnlmpSymbolsDirectory, TestPdbFile, &SearchWindowsProfil, true) == true) {
-				pCurrentWindowsProfil = SearchWindowsProfil.pCurrentWindowsProfil;
-			}
-		}
+            if (ReccurseFile(NtkrnlmpSymbolsDirectory, TestPdbFile, &SearchWindowsProfil, true) == true) {
+                pCurrentWindowsProfil = SearchWindowsProfil.pCurrentWindowsProfil;
+            }
+        }
     }
 
     if (pCurrentWindowsProfil == NULL){
@@ -491,10 +491,10 @@ bool InitialAnalysis(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
     printf("\t0x%llx,\n", pCurrentWindowsProfil->KdpDataBlockEncodedOffset);
     printf("\t0x%llx,\n", pCurrentWindowsProfil->KdDebuggerDataBlockOffset);
     printf("\t0x%llx,\n", pCurrentWindowsProfil->KdVersionBlockOffset);
-	printf("\t0x%llx,\n", pCurrentWindowsProfil->KiDivideErrorFaultOffset);
-	printf("\t0x%llx,\n", pCurrentWindowsProfil->KdpDebuggerDataListHeadOffset);
-	printf("\t%s,\n", pCurrentWindowsProfil->bClearKdDebuggerDataBlock ? "true" : "false");
-	printf("\t%s\n", pCurrentWindowsProfil->bIsX86 ? "true" : "false");
+    printf("\t0x%llx,\n", pCurrentWindowsProfil->KiDivideErrorFaultOffset);
+    printf("\t0x%llx,\n", pCurrentWindowsProfil->KdpDebuggerDataListHeadOffset);
+    printf("\t%s,\n", pCurrentWindowsProfil->bClearKdDebuggerDataBlock ? "true" : "false");
+    printf("\t%s\n", pCurrentWindowsProfil->bIsX86 ? "true" : "false");
     printf("}\n");
 
     printf("v_KDBG : %llx\n", pWinbagilityCtx->v_KDBG);

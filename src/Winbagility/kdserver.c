@@ -21,8 +21,8 @@
 #include "winbagility.h"
 
 //Status
-#define STATUS_SUCCESS		0x00000000
-#define STATUS_UNSUCCESSFUL	0xc0000001
+#define STATUS_SUCCESS        0x00000000
+#define STATUS_UNSUCCESSFUL    0xc0000001
 
 #define INITIAL_KD_SEQUENCE_NUMBER 0x80800800
 
@@ -130,28 +130,28 @@ BOOL HandleBreakPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, bool bIsBreak, bool 
     pRespKdPkt->StateChange.NumberProcessors = 1;
 
     //Read current thread address form KPRCB
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-			0,
-			(uint8_t*)&pRespKdPkt->StateChange.Thread,
-			sizeof(uint64_t),
-			pWinbagilityCtx->v_KPRCB[0] + KPRCB_CURRENTTHREAD_OFFSET_X86);
-		pRespKdPkt->StateChange.Thread |= 0xFFFFFFFF00000000;
-	}
-	else {
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-			0,
-			(uint8_t*)&pRespKdPkt->StateChange.Thread,
-			sizeof(uint64_t),
-			pWinbagilityCtx->v_KPRCB[0] + KPRCB_CURRENTTHREAD_OFFSET_X64);
-	}
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+            0,
+            (uint8_t*)&pRespKdPkt->StateChange.Thread,
+            sizeof(uint64_t),
+            pWinbagilityCtx->v_KPRCB[0] + KPRCB_CURRENTTHREAD_OFFSET_X86);
+        pRespKdPkt->StateChange.Thread |= 0xFFFFFFFF00000000;
+    }
+    else {
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+            0,
+            (uint8_t*)&pRespKdPkt->StateChange.Thread,
+            sizeof(uint64_t),
+            pWinbagilityCtx->v_KPRCB[0] + KPRCB_CURRENTTHREAD_OFFSET_X64);
+    }
 
-	//Get ProgramCounter from Rip
-	uint64_t ProgramCounter = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER);
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		ProgramCounter |= 0xFFFFFFFF00000000;
-	}
-	pRespKdPkt->StateChange.ProgramCounter = ProgramCounter;
+    //Get ProgramCounter from Rip
+    uint64_t ProgramCounter = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER);
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        ProgramCounter |= 0xFFFFFFFF00000000;
+    }
+    pRespKdPkt->StateChange.ProgramCounter = ProgramCounter;
 
 
     //Get the CpuState from Stub
@@ -174,13 +174,13 @@ BOOL HandleBreakPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, bool bIsBreak, bool 
     //TODO: Generate good ExceptionRecord
     pRespKdPkt->StateChange.Exception.FirstChance = 0x00000001;
 
-	pRespKdPkt->StateChange.Exception.ExceptionRecord.NumberParameters = 0x00000003;
+    pRespKdPkt->StateChange.Exception.ExceptionRecord.NumberParameters = 0x00000003;
     pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionAddress = ProgramCounter;
 
-	//Set minimal exception
-	pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionInformation[0] = 0;
-	pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionInformation[1] = pRespKdPkt->StateChange.Thread;
-	pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionInformation[2] = 0;
+    //Set minimal exception
+    pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionInformation[0] = 0;
+    pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionInformation[1] = pRespKdPkt->StateChange.Thread;
+    pRespKdPkt->StateChange.Exception.ExceptionRecord.ExceptionInformation[2] = 0;
 
     pRespKdPkt->StateChange.ControlReport.Dr6 = (uint32_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
     pRespKdPkt->StateChange.ControlReport.Dr7 = (uint32_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
@@ -191,7 +191,7 @@ BOOL HandleBreakPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, bool bIsBreak, bool 
         0,
         pRespKdPkt->StateChange.ControlReport.InstructionStream,
         pRespKdPkt->StateChange.ControlReport.InstructionCount,
-		ProgramCounter);
+        ProgramCounter);
     pRespKdPkt->StateChange.ControlReport.ReportFlags = 0x0003;
 
     pRespKdPkt->StateChange.ControlReport.SegCs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER);
@@ -255,17 +255,17 @@ BOOL HandleDbgKdGetVersionApiPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_PACK
     pRespKdPkt->ManipulateState64.ProcessorLevel = pWinbagilityCtx->CpuCount;
     pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_SUCCESS;
 
-	uint64_t v_KdVersionBlock = pWinbagilityCtx->v_KernBase + pWinbagilityCtx->pCurrentWindowsProfil->KdVersionBlockOffset;
+    uint64_t v_KdVersionBlock = pWinbagilityCtx->v_KernBase + pWinbagilityCtx->pCurrentWindowsProfil->KdVersionBlockOffset;
     //Read nt!KdVersionBlock
-	if (pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-		0,
-		(uint8_t*)&pRespKdPkt->ManipulateState64.DbgGetVersion,
-		sizeof(DBGKD_GET_VERSION_API64),
-		v_KdVersionBlock) == false){
-		//TODO: Create one from scratch...
-	}
-	
-	SendKDPacket(pWinbagilityCtx->hWinDbgPipe, pRespKdPkt);
+    if (pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+        0,
+        (uint8_t*)&pRespKdPkt->ManipulateState64.DbgGetVersion,
+        sizeof(DBGKD_GET_VERSION_API64),
+        v_KdVersionBlock) == false){
+        //TODO: Create one from scratch...
+    }
+    
+    SendKDPacket(pWinbagilityCtx->hWinDbgPipe, pRespKdPkt);
 
     return true;
 }
@@ -289,10 +289,10 @@ BOOL HandleDbgKdReadVirtualMemoryApiPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, 
     pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress = pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress;
     pRespKdPkt->ManipulateState64.ReadMemory.TransferCount = pReqKdPkt->ManipulateState64.ReadMemory.TransferCount;
 
-	uint64_t TargetBaseAddress = pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress;
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		TargetBaseAddress = TargetBaseAddress & 0xFFFFFFFF;
-	}
+    uint64_t TargetBaseAddress = pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress;
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        TargetBaseAddress = TargetBaseAddress & 0xFFFFFFFF;
+    }
 
     bool bIsReadSuccess = false;
     Log1("TargetbaseAddress %llx TransfertCount: %d\n", TargetBaseAddress, pReqKdPkt->ManipulateState64.ReadMemory.TransferCount);
@@ -301,8 +301,8 @@ BOOL HandleDbgKdReadVirtualMemoryApiPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, 
     //Windbg read @v_KDBG or @v_KDBG+sizeof(DBGKD_DEBUG_DATA_HEADER64)
     //But what do I have to print when user want to read v_KDBG ? (Ciphered or Unciphered) ?
     if (pWinbagilityCtx->pCurrentWindowsProfil->bClearKdDebuggerDataBlock == false &&
-		TargetBaseAddress >= pWinbagilityCtx->v_KDBG &&
-		(TargetBaseAddress + pRespKdPkt->ManipulateState64.ReadMemory.TransferCount) <= (pWinbagilityCtx->v_KDBG + sizeof(KDDEBUGGER_DATA64))){
+        TargetBaseAddress >= pWinbagilityCtx->v_KDBG &&
+        (TargetBaseAddress + pRespKdPkt->ManipulateState64.ReadMemory.TransferCount) <= (pWinbagilityCtx->v_KDBG + sizeof(KDDEBUGGER_DATA64))){
         uint64_t u64OffsetInKDBG = TargetBaseAddress - pWinbagilityCtx->v_KDBG;
         //Check for Overflow
         if (u64OffsetInKDBG + pReqKdPkt->ManipulateState64.ReadMemory.TransferCount > sizeof(KDDEBUGGER_DATA64)){
@@ -316,38 +316,38 @@ BOOL HandleDbgKdReadVirtualMemoryApiPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, 
     }
     else{
 
-		if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true &&
-			TargetBaseAddress == pWinbagilityCtx->KdpDebuggerDataListHead &&
-			pReqKdPkt->ManipulateState64.ReadMemory.TransferCount == 4) {
-			//This address is not mapped when no /DEBUG in x86
-			memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, (uint8_t*)&pWinbagilityCtx->v_KDBG, sizeof(uint32_t));
-			bIsReadSuccess = true;
-		}
-		else {
-			//Move this !
-			switch (TargetBaseAddress) {
-			case FDP2KD_GET_VMNAME_MAGIC:
-				//Get the name of the FDP Channel, used by extensions
-				memset(pRespKdPkt->ManipulateState64.ReadMemory.Data, 0, pReqKdPkt->ManipulateState64.ReadMemory.TransferCount);
-				memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, pWinbagilityCtx->pStubOpenArg, strlen(pWinbagilityCtx->pStubOpenArg));
-				bIsReadSuccess = true;
-				break;
-			case FDP2KD_FAKE_SINGLE_STEP_MAGIC:
-				//Enable fake single-step, used by extensions
-				pWinbagilityCtx->bFakeSingleStepEnabled = true;
-				pRespKdPkt->ManipulateState64.ReadMemory.Data[0] = 0x01;
-				bIsReadSuccess = true;
-				break;
-			default:
-				//Normal memory read
-				bIsReadSuccess = pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-					0,
-					(uint8_t*)&pRespKdPkt->ManipulateState64.ReadMemory.Data,
-					pReqKdPkt->ManipulateState64.ReadMemory.TransferCount,
-					TargetBaseAddress);
-				break;
-			}
-		}
+        if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true &&
+            TargetBaseAddress == pWinbagilityCtx->KdpDebuggerDataListHead &&
+            pReqKdPkt->ManipulateState64.ReadMemory.TransferCount == 4) {
+            //This address is not mapped when no /DEBUG in x86
+            memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, (uint8_t*)&pWinbagilityCtx->v_KDBG, sizeof(uint32_t));
+            bIsReadSuccess = true;
+        }
+        else {
+            //Move this !
+            switch (TargetBaseAddress) {
+            case FDP2KD_GET_VMNAME_MAGIC:
+                //Get the name of the FDP Channel, used by extensions
+                memset(pRespKdPkt->ManipulateState64.ReadMemory.Data, 0, pReqKdPkt->ManipulateState64.ReadMemory.TransferCount);
+                memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, pWinbagilityCtx->pStubOpenArg, strlen(pWinbagilityCtx->pStubOpenArg));
+                bIsReadSuccess = true;
+                break;
+            case FDP2KD_FAKE_SINGLE_STEP_MAGIC:
+                //Enable fake single-step, used by extensions
+                pWinbagilityCtx->bFakeSingleStepEnabled = true;
+                pRespKdPkt->ManipulateState64.ReadMemory.Data[0] = 0x01;
+                bIsReadSuccess = true;
+                break;
+            default:
+                //Normal memory read
+                bIsReadSuccess = pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+                    0,
+                    (uint8_t*)&pRespKdPkt->ManipulateState64.ReadMemory.Data,
+                    pReqKdPkt->ManipulateState64.ReadMemory.TransferCount,
+                    TargetBaseAddress);
+                break;
+            }
+        }
     }
 
     if (bIsReadSuccess){
@@ -383,17 +383,17 @@ BOOL HandleDbgKdWriteVirtualMemoryApiPkt(WINBAGILITY_CONTEXT_T *pWinbagilityCtx,
     pRespKdPkt->ManipulateState64.WriteMemory.TransferCount = pReqKdPkt->ManipulateState64.WriteMemory.TransferCount;
     pRespKdPkt->ManipulateState64.WriteMemory.ActualBytesWritten = pReqKdPkt->ManipulateState64.WriteMemory.TransferCount;
 
-	uint64_t TargetBase = pRespKdPkt->ManipulateState64.WriteMemory.TargetBaseAddress;
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true){
-		TargetBase &= 0xFFFFFFFF;
-	}
-	Log1("TargetbaseAddress %llx TransfertCount: %d\n", TargetBase, pReqKdPkt->ManipulateState64.WriteMemory.TransferCount);
+    uint64_t TargetBase = pRespKdPkt->ManipulateState64.WriteMemory.TargetBaseAddress;
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true){
+        TargetBase &= 0xFFFFFFFF;
+    }
+    Log1("TargetbaseAddress %llx TransfertCount: %d\n", TargetBase, pReqKdPkt->ManipulateState64.WriteMemory.TransferCount);
 
     bool bIsWriteSucess = pWinbagilityCtx->pfnWriteVirtualMemory(pWinbagilityCtx->pUserHandle,
         0,
         pReqKdPkt->ManipulateState64.WriteMemory.Data,
         pReqKdPkt->ManipulateState64.WriteMemory.TransferCount,
-		TargetBase);
+        TargetBase);
 
     if (bIsWriteSucess){
         pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_SUCCESS;
@@ -498,9 +498,9 @@ BOOL HandleDbgKdWriteBreakPointApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_PA
         pRespKdPkt->ManipulateState64.WriteBreakPoint.u[i] = pReqKdPkt->ManipulateState64.WriteBreakPoint.u[i];
     }
 
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		pRespKdPkt->ManipulateState64.WriteBreakPoint.BreakPointAddress &= 0xFFFFFFFF;
-	}
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        pRespKdPkt->ManipulateState64.WriteBreakPoint.BreakPointAddress &= 0xFFFFFFFF;
+    }
 
     int tmpBreakpointHandle = pWinbagilityCtx->pfnSetBreakpoint(pWinbagilityCtx->pUserHandle,
         CurrentCpuId,
@@ -551,17 +551,17 @@ BOOL HandleDbgKdRestoreBreakPointApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_
 
 BOOL HandleDbgKdGetRegisterApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_PACKET_T *pReqKdPkt)
 {
-	LogFlow();
+    LogFlow();
 
-	KD_PACKET_T *pRespKdPkt = (KD_PACKET_T*)pWinbagilityCtx->TmpOuputBuffer;
+    KD_PACKET_T *pRespKdPkt = (KD_PACKET_T*)pWinbagilityCtx->TmpOuputBuffer;
 
-	//XXX
-	//TODO :
-	//if(pWinbagilityCtx->pCurrentProfil->MajorVersion <= 7){
-		//pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_SUCCESS;
-	//else{
-		pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_UNSUCCESSFUL;
-	//}
+    //XXX
+    //TODO :
+    //if(pWinbagilityCtx->pCurrentProfil->MajorVersion <= 7){
+        //pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_SUCCESS;
+    //else{
+        pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_UNSUCCESSFUL;
+    //}
 
     uint32_t CurrentCpuId = pReqKdPkt->ManipulateState64.Processor;
 
@@ -573,63 +573,63 @@ BOOL HandleDbgKdGetRegisterApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_PACKET
     pRespKdPkt->ManipulateState64.Processor = CurrentCpuId;
     pRespKdPkt->ManipulateState64.ProcessorLevel = pWinbagilityCtx->CpuCount;
 
-	//XXX: Do not remove this ! Even with STATUS_UNSUCCESSFUL
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		//TODO !
-	}
-	else {
-		//TODO: What those values are ?
-		pRespKdPkt->ManipulateState64.GetRegisters.u[0] = pReqKdPkt->ManipulateState64.GetRegisters.u[0];
-		pRespKdPkt->ManipulateState64.GetRegisters.u[1] = pReqKdPkt->ManipulateState64.GetRegisters.u[1] + 0x4D0;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[2] = pReqKdPkt->ManipulateState64.GetRegisters.u[2];
-		pRespKdPkt->ManipulateState64.GetRegisters.u[3] = pReqKdPkt->ManipulateState64.GetRegisters.u[3];
-		pRespKdPkt->ManipulateState64.GetRegisters.u[4] = pReqKdPkt->ManipulateState64.GetRegisters.u[4];
-		//What is this ?
-		pRespKdPkt->ManipulateState64.GetRegisters.u[5] = 0x0000000000000000;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[6] = 0x0000000000000000;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[7] = 0x0000000000000000;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[8] = 0x0000000000000000;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[9] = 0x0000000000000000;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[10] = 0x0000000000000000;
-		pRespKdPkt->ManipulateState64.GetRegisters.u[11] = 0x00001F800010001F;
+    //XXX: Do not remove this ! Even with STATUS_UNSUCCESSFUL
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        //TODO !
+    }
+    else {
+        //TODO: What those values are ?
+        pRespKdPkt->ManipulateState64.GetRegisters.u[0] = pReqKdPkt->ManipulateState64.GetRegisters.u[0];
+        pRespKdPkt->ManipulateState64.GetRegisters.u[1] = pReqKdPkt->ManipulateState64.GetRegisters.u[1] + 0x4D0;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[2] = pReqKdPkt->ManipulateState64.GetRegisters.u[2];
+        pRespKdPkt->ManipulateState64.GetRegisters.u[3] = pReqKdPkt->ManipulateState64.GetRegisters.u[3];
+        pRespKdPkt->ManipulateState64.GetRegisters.u[4] = pReqKdPkt->ManipulateState64.GetRegisters.u[4];
+        //What is this ?
+        pRespKdPkt->ManipulateState64.GetRegisters.u[5] = 0x0000000000000000;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[6] = 0x0000000000000000;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[7] = 0x0000000000000000;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[8] = 0x0000000000000000;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[9] = 0x0000000000000000;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[10] = 0x0000000000000000;
+        pRespKdPkt->ManipulateState64.GetRegisters.u[11] = 0x00001F800010001F;
 
-		pRespKdPkt->ManipulateState64.GetRegisters.SegCs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.SegDs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.SegEs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_ES_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.SegFs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_FS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.SegGs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.SegSs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_SS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.SegCs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.SegDs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.SegEs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_ES_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.SegFs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_FS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.SegGs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.SegSs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_SS_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetRegisters.Rip = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rbp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBP_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rsp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSP_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rip = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rbp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBP_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rsp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSP_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetRegisters.Rax = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RAX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rbx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rcx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RCX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rdx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rsi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSI_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Rdi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDI_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R8 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R8_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R9 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R9_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R10 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R10_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R11 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R11_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R12 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R12_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R13 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R13_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R14 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R14_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.R15 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R15_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rax = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RAX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rbx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rcx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RCX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rdx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rsi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSI_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Rdi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDI_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R8 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R8_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R9 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R9_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R10 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R10_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R11 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R11_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R12 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R12_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R13 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R13_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R14 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R14_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.R15 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R15_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetRegisters.EFlags = (uint32_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RFLAGS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.EFlags = (uint32_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RFLAGS_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetRegisters.Dr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR0_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Dr1 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR1_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Dr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR2_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Dr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR3_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Dr6 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
-		pRespKdPkt->ManipulateState64.GetRegisters.Dr7 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Dr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR0_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Dr1 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR1_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Dr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR2_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Dr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR3_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Dr6 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
+        pRespKdPkt->ManipulateState64.GetRegisters.Dr7 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
 
-		pWinbagilityCtx->pfnGetFxState64(pWinbagilityCtx->pUserHandle, CurrentCpuId, (XSAVE_FORMAT64*)&pRespKdPkt->ManipulateState64.GetRegisters.FltSave);
-	}
+        pWinbagilityCtx->pfnGetFxState64(pWinbagilityCtx->pUserHandle, CurrentCpuId, (XSAVE_FORMAT64*)&pRespKdPkt->ManipulateState64.GetRegisters.FltSave);
+    }
 
     SendKDPacket(pWinbagilityCtx->hWinDbgPipe, pRespKdPkt);
     return true;
@@ -724,103 +724,103 @@ BOOL HandleDbgKdReadControlSpaceApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_P
     pRespKdPkt->ManipulateState64.Processor = CurrentCpuId;
     pRespKdPkt->ManipulateState64.ProcessorLevel = pWinbagilityCtx->CpuCount;
 
-	pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress = pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress;
+    pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress = pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress;
 
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress = pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress & 0xFFFFFFFF;
-	}
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress = pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress & 0xFFFFFFFF;
+    }
     pRespKdPkt->ManipulateState64.ReadMemory.TransferCount = pReqKdPkt->ManipulateState64.ReadMemory.TransferCount;
     pRespKdPkt->ManipulateState64.ReadMemory.ActualBytesRead = pReqKdPkt->ManipulateState64.ReadMemory.TransferCount;
     pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_SUCCESS;
 
     Log1("TargetBaseAddress %llx TransfertCount: %d\n", pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress, pReqKdPkt->ManipulateState64.ReadMemory.TransferCount);
 
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-			0,
-			pRespKdPkt->ManipulateState64.ReadMemory.Data,
-			pReqKdPkt->ManipulateState64.ReadMemory.TransferCount,
-			pWinbagilityCtx->v_KPRCB[0] + 0x18 + pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress);
-	}
-	else {
-		switch (pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress){
-		case 0: //v_KPCR
-		{
-			//Get the address of KPCR
-			memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &pWinbagilityCtx->v_KPCR, sizeof(uint64_t));
-			break;
-		}
-		case 1: //v_KPRCB
-			//Get the address of KPRCB
-			memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &pWinbagilityCtx->v_KPRCB[CurrentCpuId], sizeof(uint64_t));
-			break;
-		case 2: //SpecialRegisters
-		{
-			//TODO: 
-			pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-				0,
-				pRespKdPkt->ManipulateState64.ReadMemory.Data,
-				pReqKdPkt->ManipulateState64.ReadMemory.TransferCount,
-				pWinbagilityCtx->v_KPRCB[0] + 0x18 + pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress);
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+            0,
+            pRespKdPkt->ManipulateState64.ReadMemory.Data,
+            pReqKdPkt->ManipulateState64.ReadMemory.TransferCount,
+            pWinbagilityCtx->v_KPRCB[0] + 0x18 + pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress);
+    }
+    else {
+        switch (pReqKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress){
+        case 0: //v_KPCR
+        {
+            //Get the address of KPCR
+            memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &pWinbagilityCtx->v_KPCR, sizeof(uint64_t));
+            break;
+        }
+        case 1: //v_KPRCB
+            //Get the address of KPRCB
+            memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &pWinbagilityCtx->v_KPRCB[CurrentCpuId], sizeof(uint64_t));
+            break;
+        case 2: //SpecialRegisters
+        {
+            //TODO: 
+            pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+                0,
+                pRespKdPkt->ManipulateState64.ReadMemory.Data,
+                pReqKdPkt->ManipulateState64.ReadMemory.TransferCount,
+                pWinbagilityCtx->v_KPRCB[0] + 0x18 + pRespKdPkt->ManipulateState64.ReadMemory.TargetBaseAddress);
 
-			_KPROCESSOR_STATE64 *tmpProcessorState = (_KPROCESSOR_STATE64*)pRespKdPkt->ManipulateState64.ReadMemory.Data;
-			tmpProcessorState->SpecialRegisters.KernelDr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR0_REGISTER);
-			tmpProcessorState->SpecialRegisters.KernelDr1 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR1_REGISTER);
-			tmpProcessorState->SpecialRegisters.KernelDr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR2_REGISTER);
-			tmpProcessorState->SpecialRegisters.KernelDr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR3_REGISTER);
-			tmpProcessorState->SpecialRegisters.KernelDr6 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
-			tmpProcessorState->SpecialRegisters.KernelDr7 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
+            _KPROCESSOR_STATE64 *tmpProcessorState = (_KPROCESSOR_STATE64*)pRespKdPkt->ManipulateState64.ReadMemory.Data;
+            tmpProcessorState->SpecialRegisters.KernelDr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR0_REGISTER);
+            tmpProcessorState->SpecialRegisters.KernelDr1 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR1_REGISTER);
+            tmpProcessorState->SpecialRegisters.KernelDr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR2_REGISTER);
+            tmpProcessorState->SpecialRegisters.KernelDr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR3_REGISTER);
+            tmpProcessorState->SpecialRegisters.KernelDr6 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
+            tmpProcessorState->SpecialRegisters.KernelDr7 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
 
-			tmpProcessorState->SpecialRegisters.Gdtr.Base = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GDTRB_REGISTER);
-			tmpProcessorState->SpecialRegisters.Gdtr.Limit = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GDTRL_REGISTER);
-			tmpProcessorState->SpecialRegisters.Idtr.Base = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_IDTRB_REGISTER);
-			tmpProcessorState->SpecialRegisters.Idtr.Limit = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_IDTRL_REGISTER);
-			tmpProcessorState->SpecialRegisters.Tr = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_TR_REGISTER);
-			tmpProcessorState->SpecialRegisters.Ldtr = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_LDTR_REGISTER);
+            tmpProcessorState->SpecialRegisters.Gdtr.Base = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GDTRB_REGISTER);
+            tmpProcessorState->SpecialRegisters.Gdtr.Limit = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GDTRL_REGISTER);
+            tmpProcessorState->SpecialRegisters.Idtr.Base = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_IDTRB_REGISTER);
+            tmpProcessorState->SpecialRegisters.Idtr.Limit = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_IDTRL_REGISTER);
+            tmpProcessorState->SpecialRegisters.Tr = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_TR_REGISTER);
+            tmpProcessorState->SpecialRegisters.Ldtr = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_LDTR_REGISTER);
 
-			//tmpProcessorState->SpecialRegisters.MxCsr = 0x00001f80;
-			//tmpProcessorState->SpecialRegisters.Xcr0 = 0x7;
+            //tmpProcessorState->SpecialRegisters.MxCsr = 0x00001f80;
+            //tmpProcessorState->SpecialRegisters.Xcr0 = 0x7;
 
-			tmpProcessorState->SpecialRegisters.Cr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR0_REGISTER);
-			tmpProcessorState->SpecialRegisters.Cr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR2_REGISTER);
-			tmpProcessorState->SpecialRegisters.Cr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR3_REGISTER);
-			tmpProcessorState->SpecialRegisters.Cr4 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR4_REGISTER);
-			tmpProcessorState->SpecialRegisters.Cr8 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR8_REGISTER);
+            tmpProcessorState->SpecialRegisters.Cr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR0_REGISTER);
+            tmpProcessorState->SpecialRegisters.Cr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR2_REGISTER);
+            tmpProcessorState->SpecialRegisters.Cr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR3_REGISTER);
+            tmpProcessorState->SpecialRegisters.Cr4 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR4_REGISTER);
+            tmpProcessorState->SpecialRegisters.Cr8 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CR8_REGISTER);
 
-			break;
-		}
-		 case 3: //v_KTHREAD
-		 {
-			 //Copy a pointer to the current thread
-			 uint64_t CurrentThreadPointer = 0;
-			 /*//TODO: WTF,Should be that..
-			 {
-				 uint64_t CurrentThreadPointer = (pWinbagilityCtx->v_KPRCB[CurrentCpuId] + 0x8);
-				 memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &CurrentThreadPointer, sizeof(CurrentThreadPointer));
+            break;
+        }
+         case 3: //v_KTHREAD
+         {
+             //Copy a pointer to the current thread
+             uint64_t CurrentThreadPointer = 0;
+             /*//TODO: WTF,Should be that..
+             {
+                 uint64_t CurrentThreadPointer = (pWinbagilityCtx->v_KPRCB[CurrentCpuId] + 0x8);
+                 memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &CurrentThreadPointer, sizeof(CurrentThreadPointer));
 
-				 pRespKdPkt->ManipulateState64.ReadMemory.TransferCount = sizeof(CurrentThreadPointer);
-				 pRespKdPkt->ManipulateState64.ReadMemory.ActualBytesRead = sizeof(CurrentThreadPointer);
-			 }*/
-			 //But not indeed...
-			 {
-				 pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
-					 0,
-					 (uint8_t*)&CurrentThreadPointer,
-					 sizeof(CurrentThreadPointer),
-					 pWinbagilityCtx->v_KPRCB[CurrentCpuId] + 0x8);
-				 memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &CurrentThreadPointer, sizeof(CurrentThreadPointer));
+                 pRespKdPkt->ManipulateState64.ReadMemory.TransferCount = sizeof(CurrentThreadPointer);
+                 pRespKdPkt->ManipulateState64.ReadMemory.ActualBytesRead = sizeof(CurrentThreadPointer);
+             }*/
+             //But not indeed...
+             {
+                 pWinbagilityCtx->pfnReadVirtualMemory(pWinbagilityCtx->pUserHandle,
+                     0,
+                     (uint8_t*)&CurrentThreadPointer,
+                     sizeof(CurrentThreadPointer),
+                     pWinbagilityCtx->v_KPRCB[CurrentCpuId] + 0x8);
+                 memcpy(pRespKdPkt->ManipulateState64.ReadMemory.Data, &CurrentThreadPointer, sizeof(CurrentThreadPointer));
 
-				 CurrentThreadPointer = CurrentThreadPointer - 0x538D + 0x220; //TODO: what the fuck, reverse...
+                 CurrentThreadPointer = CurrentThreadPointer - 0x538D + 0x220; //TODO: what the fuck, reverse...
 
-				 pRespKdPkt->ManipulateState64.ReadMemory.TransferCount = sizeof(CurrentThreadPointer);
-				 pRespKdPkt->ManipulateState64.ReadMemory.ActualBytesRead = sizeof(CurrentThreadPointer);
-			 }
-			 break;
-		 }
-		 default:
-			 ParseKDPkt(pReqKdPkt);
-		 }
-	}
+                 pRespKdPkt->ManipulateState64.ReadMemory.TransferCount = sizeof(CurrentThreadPointer);
+                 pRespKdPkt->ManipulateState64.ReadMemory.ActualBytesRead = sizeof(CurrentThreadPointer);
+             }
+             break;
+         }
+         default:
+             ParseKDPkt(pReqKdPkt);
+         }
+    }
 
     SendKDPacket(pWinbagilityCtx->hWinDbgPipe, pRespKdPkt);
     return true;
@@ -854,7 +854,7 @@ bool HandleDbgKdWriteControlSpaceApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_
         break;
     case 2:{ //@SpecialRegisters
         _KPROCESSOR_STATE64 *tmpProcessorState = (_KPROCESSOR_STATE64*)pReqKdPkt->ManipulateState64.WriteMemory.Data;
-		KSPECIAL_REGISTERS64_T *tmpSpecialRegisters = (KSPECIAL_REGISTERS64_T*)pReqKdPkt->ManipulateState64.WriteMemory.Data;
+        KSPECIAL_REGISTERS64_T *tmpSpecialRegisters = (KSPECIAL_REGISTERS64_T*)pReqKdPkt->ManipulateState64.WriteMemory.Data;
 
         pWinbagilityCtx->pfnWriteRegister(pWinbagilityCtx->pUserHandle, CurrentCpuId, FDP_DR0_REGISTER, tmpSpecialRegisters->KernelDr0);
         pWinbagilityCtx->pfnWriteRegister(pWinbagilityCtx->pUserHandle, CurrentCpuId, FDP_DR1_REGISTER, tmpSpecialRegisters->KernelDr1);
@@ -990,67 +990,67 @@ bool HandleDbgKdGetContextApi(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, KD_PACKET_
     pRespKdPkt->ManipulateState64.ProcessorLevel = pWinbagilityCtx->CpuCount;
     pRespKdPkt->ManipulateState64.ReturnStatus = STATUS_SUCCESS;
 
-	if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
-		//TODO: Make a struct !
-		uint32_t *pTest = (uint32_t*)&pRespKdPkt->ManipulateState64.GetContext;
-		pTest[0x36] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RAX_REGISTER) & 0xFFFFFFFF;
-		pTest[0x33] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBX_REGISTER) & 0xFFFFFFFF;
-		pTest[0x35] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RCX_REGISTER) & 0xFFFFFFFF;
-		pTest[0x34] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDX_REGISTER) & 0xFFFFFFFF;
-		pTest[0x32] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSI_REGISTER) & 0xFFFFFFFF;
-		pTest[0x31] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDI_REGISTER) & 0xFFFFFFFF;
-		pTest[0x38] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER) & 0xFFFFFFFF;
-		pTest[0x3b] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSP_REGISTER) & 0xFFFFFFFF;
-		pTest[0x37] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBP_REGISTER) & 0xFFFFFFFF;
-		pTest[0x39] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER) & 0xFFFFFFFF;
-		pTest[0x3c] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_SS_REGISTER) & 0xFFFFFFFF;
-		pTest[0x30] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DS_REGISTER) & 0xFFFFFFFF;
-		pTest[0x2f] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_ES_REGISTER) & 0xFFFFFFFF;
-		pTest[0x2e] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_FS_REGISTER) & 0xFFFFFFFF;
-		pTest[0x2d] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GS_REGISTER) & 0xFFFFFFFF;
-		pTest[0x3a] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RFLAGS_REGISTER) & 0xFFFFFFFF;
-	}
-	else {
-		pRespKdPkt->ManipulateState64.GetContext.u[0] = 0xDEADCACADEADCACA;
-		pRespKdPkt->ManipulateState64.GetContext.u[1] = 0xDEADCACADEADCACA;
-		pRespKdPkt->ManipulateState64.GetContext.u[2] = 0xDEADCACADEADCACA;
+    if (pWinbagilityCtx->pCurrentWindowsProfil->bIsX86 == true) {
+        //TODO: Make a struct !
+        uint32_t *pTest = (uint32_t*)&pRespKdPkt->ManipulateState64.GetContext;
+        pTest[0x36] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RAX_REGISTER) & 0xFFFFFFFF;
+        pTest[0x33] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBX_REGISTER) & 0xFFFFFFFF;
+        pTest[0x35] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RCX_REGISTER) & 0xFFFFFFFF;
+        pTest[0x34] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDX_REGISTER) & 0xFFFFFFFF;
+        pTest[0x32] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSI_REGISTER) & 0xFFFFFFFF;
+        pTest[0x31] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDI_REGISTER) & 0xFFFFFFFF;
+        pTest[0x38] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER) & 0xFFFFFFFF;
+        pTest[0x3b] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSP_REGISTER) & 0xFFFFFFFF;
+        pTest[0x37] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBP_REGISTER) & 0xFFFFFFFF;
+        pTest[0x39] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER) & 0xFFFFFFFF;
+        pTest[0x3c] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_SS_REGISTER) & 0xFFFFFFFF;
+        pTest[0x30] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DS_REGISTER) & 0xFFFFFFFF;
+        pTest[0x2f] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_ES_REGISTER) & 0xFFFFFFFF;
+        pTest[0x2e] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_FS_REGISTER) & 0xFFFFFFFF;
+        pTest[0x2d] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GS_REGISTER) & 0xFFFFFFFF;
+        pTest[0x3a] = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RFLAGS_REGISTER) & 0xFFFFFFFF;
+    }
+    else {
+        pRespKdPkt->ManipulateState64.GetContext.u[0] = 0xDEADCACADEADCACA;
+        pRespKdPkt->ManipulateState64.GetContext.u[1] = 0xDEADCACADEADCACA;
+        pRespKdPkt->ManipulateState64.GetContext.u[2] = 0xDEADCACADEADCACA;
 
-		pRespKdPkt->ManipulateState64.GetContext.Context.SegCs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.SegDs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.SegEs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_ES_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.SegFs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_FS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.SegGs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.SegSs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_SS_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rip = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rbp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBP_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rsp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSP_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.SegCs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_CS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.SegDs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.SegEs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_ES_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.SegFs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_FS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.SegGs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_GS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.SegSs = (uint16_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_SS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rip = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RIP_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rbp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBP_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rsp = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSP_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rax = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RAX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rbx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rcx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RCX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rdx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDX_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rsi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSI_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Rdi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDI_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R8 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R8_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R9 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R9_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R10 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R10_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R11 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R11_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R12 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R12_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R13 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R13_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R14 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R14_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.R15 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R15_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rax = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RAX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rbx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RBX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rcx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RCX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rdx = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDX_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rsi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RSI_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Rdi = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RDI_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R8 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R8_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R9 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R9_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R10 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R10_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R11 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R11_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R12 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R12_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R13 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R13_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R14 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R14_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.R15 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_R15_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetContext.Context.EFlags = (uint32_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RFLAGS_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.EFlags = (uint32_t)WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_RFLAGS_REGISTER);
 
-		pRespKdPkt->ManipulateState64.GetContext.Context.Dr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR0_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Dr1 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR1_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Dr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR2_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Dr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR3_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Dr6 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
-		pRespKdPkt->ManipulateState64.GetContext.Context.Dr7 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Dr0 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR0_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Dr1 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR1_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Dr2 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR2_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Dr3 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR3_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Dr6 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR6_REGISTER);
+        pRespKdPkt->ManipulateState64.GetContext.Context.Dr7 = WDBG_ReadRegister(pWinbagilityCtx, CurrentCpuId, FDP_DR7_REGISTER);
 
-		pWinbagilityCtx->pfnGetFxState64(pWinbagilityCtx->pUserHandle, CurrentCpuId, &pRespKdPkt->ManipulateState64.GetContext.Context.FltSave);
-	}
+        pWinbagilityCtx->pfnGetFxState64(pWinbagilityCtx->pUserHandle, CurrentCpuId, &pRespKdPkt->ManipulateState64.GetContext.Context.FltSave);
+    }
     
 
     SendKDPacket(pWinbagilityCtx->hWinDbgPipe, pRespKdPkt);
@@ -1190,7 +1190,7 @@ bool HandleDbgKdTimeout(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
                 uint64_t CurrentIdtrb;
                 //TODO: FDP_STATE_REBOOTED
                 FDP_ReadRegister((FDP_SHM*)pWinbagilityCtx->pUserHandle, 0, FDP_IDTRB_REGISTER, &CurrentIdtrb);
-				//TODO !
+                //TODO !
                 if (CurrentIdtrb != pWinbagilityCtx->StartIdtrb){
                     //TODO: This is shit !
                     Sleep(10000);
@@ -1208,13 +1208,13 @@ bool HandleDbgKdTimeout(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
         }
     }
 
-	if (pWinbagilityCtx->CurrentMode == StubTypeGdb){
-		if (GDB_GetStateChanged((GDB_TYPE_T*)pWinbagilityCtx->pUserHandle) == true){
-			printf("Breakpoint Hitted !\n");
-			//Need a break !
-			HandleBreakPkt(pWinbagilityCtx, true, false);
-		}
-	}
+    if (pWinbagilityCtx->CurrentMode == StubTypeGdb){
+        if (GDB_GetStateChanged((GDB_TYPE_T*)pWinbagilityCtx->pUserHandle) == true){
+            printf("Breakpoint Hitted !\n");
+            //Need a break !
+            HandleBreakPkt(pWinbagilityCtx, true, false);
+        }
+    }
 /*    else {
 #if WINBAGILITY_POWER_SAVE 1
         //there is nothing else to do...
@@ -1390,7 +1390,7 @@ DWORD WINAPI KdMainLoop(LPVOID lpParam)
 bool StartKdServer(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
 {
     pWinbagilityCtx->ServerRunning = true;
-	pWinbagilityCtx->hMainLoopThread = NULL;
+    pWinbagilityCtx->hMainLoopThread = NULL;
     while (pWinbagilityCtx->ServerRunning){
         HANDLE hPipe;
         //Wait for a new client
@@ -1399,16 +1399,16 @@ bool StartKdServer(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
             printf("Failed to CreateNamedPipe !\n");
             return false;
         }
-		if (pWinbagilityCtx->hMainLoopThread){
+        if (pWinbagilityCtx->hMainLoopThread){
             //TODO: Terminate the thread ...
             pWinbagilityCtx->ServerRunning = false;
-			//TODO WaitForSingleObject(pWinbagilityCtx->hMainLoopThread);
+            //TODO WaitForSingleObject(pWinbagilityCtx->hMainLoopThread);
             //DisconnectNamedPipe(pWinbagilityCtx->hWinDbgPipe);
             Sleep(100);
             pWinbagilityCtx->ServerRunning = true;
         }
         pWinbagilityCtx->hWinDbgPipe = hPipe;
-		pWinbagilityCtx->hMainLoopThread = CreateThread(NULL, 0, KdMainLoop, pWinbagilityCtx, 0, NULL);
+        pWinbagilityCtx->hMainLoopThread = CreateThread(NULL, 0, KdMainLoop, pWinbagilityCtx, 0, NULL);
     }
     return true;
 }
@@ -1417,5 +1417,5 @@ void StopKdServer(WINBAGILITY_CONTEXT_T *pWinbagilityCtx)
 {
     pWinbagilityCtx->ServerRunning = false;
 
-	//TODO WaitForSingleObject(pWinbagilityCtx->hMainLoopThread);
+    //TODO WaitForSingleObject(pWinbagilityCtx->hMainLoopThread);
 }

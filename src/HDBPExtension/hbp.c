@@ -68,13 +68,13 @@ PWINDBG_EXTENSION_APIS lpExtensionApis,
 USHORT MajorVersion,
 USHORT MinorVersion
 ) {
-	ExtensionApis = *lpExtensionApis;
+    ExtensionApis = *lpExtensionApis;
 
-	SavedMajorVersion = MajorVersion;
-	SavedMinorVersion = MinorVersion;
+    SavedMajorVersion = MajorVersion;
+    SavedMinorVersion = MinorVersion;
 
-	ExtensionInit();
-	return;
+    ExtensionInit();
+    return;
 }
 
 LPEXT_API_VERSION
@@ -82,7 +82,7 @@ __declspec(dllexport)
 ExtensionApiVersion(
 VOID
 ) {
-	return &ApiVersion;
+    return &ApiVersion;
 }
 
 VOID
@@ -90,7 +90,7 @@ __declspec(dllexport)
 CheckVersion(
 VOID
 ) {
-	return;
+    return;
 }
 
 /*
@@ -113,54 +113,54 @@ VOID
 #endif
 
 
-FDP_SHM*				pFDP;
-IDebugClient*			pDebugClient;
-IDebugControl*			pDebugControl;
-IDebugEventCallbacks*	pDebugEventCallbacks;
+FDP_SHM*                pFDP;
+IDebugClient*            pDebugClient;
+IDebugControl*            pDebugControl;
+IDebugEventCallbacks*    pDebugEventCallbacks;
 
 bool InitializeIDebug()
 {
-	HRESULT Hr;
-	char Buffer[1024];
-	IID *piidIDebugClient = (IID*)Buffer;
-	Hr = IIDFromString(L"{27fe5639-8407-4f47-8364-ee118fb08ac8}", piidIDebugClient);
-	if (Hr != S_OK){
-		dprintf("Failed to IIDFromString 1\n");
-		return false;
-	}
-	Hr = DebugCreate(piidIDebugClient, (void**)&pDebugClient);
-	if (Hr != S_OK){
-		dprintf("Failed to DebugCreate\n");
-		return false;
-	}
+    HRESULT Hr;
+    char Buffer[1024];
+    IID *piidIDebugClient = (IID*)Buffer;
+    Hr = IIDFromString(L"{27fe5639-8407-4f47-8364-ee118fb08ac8}", piidIDebugClient);
+    if (Hr != S_OK){
+        dprintf("Failed to IIDFromString 1\n");
+        return false;
+    }
+    Hr = DebugCreate(piidIDebugClient, (void**)&pDebugClient);
+    if (Hr != S_OK){
+        dprintf("Failed to DebugCreate\n");
+        return false;
+    }
 
-	IID *piidIDebugControl = (IID*)Buffer;
-	Hr = IIDFromString(L"{5182e668-105e-416e-ad92-24ef800424ba}", piidIDebugControl);
-	if (Hr != S_OK){
-		dprintf("Failed to IIDFromString 2\n");
-		return false;
-	}
-	Hr = pDebugClient->lpVtbl->QueryInterface(pDebugClient, piidIDebugControl, (void**)&pDebugControl);
-	if (Hr != S_OK){
-		dprintf("Failed to QueryInterface\n");
-		return false;
-	}
+    IID *piidIDebugControl = (IID*)Buffer;
+    Hr = IIDFromString(L"{5182e668-105e-416e-ad92-24ef800424ba}", piidIDebugControl);
+    if (Hr != S_OK){
+        dprintf("Failed to IIDFromString 2\n");
+        return false;
+    }
+    Hr = pDebugClient->lpVtbl->QueryInterface(pDebugClient, piidIDebugControl, (void**)&pDebugControl);
+    if (Hr != S_OK){
+        dprintf("Failed to QueryInterface\n");
+        return false;
+    }
 
-	/*
-	IID *piidIDebugEventCallbacks = (IID*)Buffer;
-	Hr = IIDFromString(L"{337be28b-5036-4d72-b6bf-c45fbb9f2eaa}", piidIDebugEventCallbacks);
-	if (Hr != S_OK){
-		dprintf("Failed to IIDFromString 3\n");
-		return false;
-	}
-	Hr = pDebugClient->lpVtbl->QueryInterface(pDebugClient, piidIDebugEventCallbacks, (void**)&g_pDebugEventCallbacks);
-	if (Hr != S_OK){
-		dprintf("Failed to QueryInterface 3\n");
-		return false;
-	}
-	*/
+    /*
+    IID *piidIDebugEventCallbacks = (IID*)Buffer;
+    Hr = IIDFromString(L"{337be28b-5036-4d72-b6bf-c45fbb9f2eaa}", piidIDebugEventCallbacks);
+    if (Hr != S_OK){
+        dprintf("Failed to IIDFromString 3\n");
+        return false;
+    }
+    Hr = pDebugClient->lpVtbl->QueryInterface(pDebugClient, piidIDebugEventCallbacks, (void**)&g_pDebugEventCallbacks);
+    if (Hr != S_OK){
+        dprintf("Failed to QueryInterface 3\n");
+        return false;
+    }
+    */
 
-	return true;
+    return true;
 }
 
 bool ExtensionInit()
@@ -168,26 +168,26 @@ bool ExtensionInit()
     char FDP_SHMNameBuffer[256];
     ULONG ulMemoryRead = 0;
 
-	dprintf("Extension initialization...\n");
-	if (InitializeIDebug() == false){
-		dprintf("Failed to InitializeIDebug\n");
-		return false;
-	}
+    dprintf("Extension initialization...\n");
+    if (InitializeIDebug() == false){
+        dprintf("Failed to InitializeIDebug\n");
+        return false;
+    }
 
     dprintf("Getting FDP SHM from Winbagility...\n");
     ReadMemory(0xDEADCACABABECAFE, FDP_SHMNameBuffer, 256, &ulMemoryRead);
 
     dprintf("Trying to connect to FDP %s\n", FDP_SHMNameBuffer);
     pFDP = FDP_OpenSHM(FDP_SHMNameBuffer);
-	if (pFDP != NULL){
+    if (pFDP != NULL){
         dprintf("Connected to %s\n", FDP_SHMNameBuffer);
-		return true;
+        return true;
     }
     else{
         dprintf("Failed to connect to FDP %s\n", FDP_SHMNameBuffer);
-		return false;
+        return false;
     }
-	return false;
+    return false;
 }
 
 
@@ -195,10 +195,10 @@ void usage()
 {
     dprintf(
         "!hba <Access type> <Address Type> <Address> <Breakpoint Length>\n"
-		"   <Access Type>\n"
-		"       r to break on read access\n"
-		"       w to break on write access\n"
-		"       e to break on execute access\n"
+        "   <Access Type>\n"
+        "       r to break on read access\n"
+        "       w to break on write access\n"
+        "       e to break on execute access\n"
          "  <Address Type>\n"
         "       v for virtual address\n"
         "       p for physical address\n"
@@ -206,54 +206,54 @@ void usage()
         "       Virtual / Physical address to break on\n"
         "   <Breakpoint Length>\n"
         "       Length of the breakpoint\n\n");
-	dprintf(
-		"!hbint <Interrupt Number> <Error Code> <Cr2 Value>\n");
-	dprintf("!hbc BreakpointId\n");
-	dprintf(
-		"!hbmsr <Access type> <Msr Id>\n"
-		"   <Access Type>\n"
-		"       r to break on read access\n"
-		"       w to break on write access\n");
-	dprintf(
-		"!save\n");
-	dprintf(
-		"!restore\n");
-	//dprintf("!hbl");
+    dprintf(
+        "!hbint <Interrupt Number> <Error Code> <Cr2 Value>\n");
+    dprintf("!hbc BreakpointId\n");
+    dprintf(
+        "!hbmsr <Access type> <Msr Id>\n"
+        "   <Access Type>\n"
+        "       r to break on read access\n"
+        "       w to break on write access\n");
+    dprintf(
+        "!save\n");
+    dprintf(
+        "!restore\n");
+    //dprintf("!hbl");
 }
 
 FDP_AddressType getAdressType(char *flags)
 {
-	if (strlen(flags) != 1){
-		return FDP_WRONG_ADDRESS;
-	}
+    if (strlen(flags) != 1){
+        return FDP_WRONG_ADDRESS;
+    }
 
-	FDP_AddressType addressType = FDP_WRONG_ADDRESS;
-	for (size_t i = 0; i < strlen(flags); i++){
-		switch (flags[i]){
-		case 'v': addressType = FDP_VIRTUAL_ADDRESS; break;
-		case 'p': addressType = FDP_PHYSICAL_ADDRESS; break;
-		default: addressType = FDP_WRONG_ADDRESS; break;
-		}
-	}
-	return addressType;
+    FDP_AddressType addressType = FDP_WRONG_ADDRESS;
+    for (size_t i = 0; i < strlen(flags); i++){
+        switch (flags[i]){
+        case 'v': addressType = FDP_VIRTUAL_ADDRESS; break;
+        case 'p': addressType = FDP_PHYSICAL_ADDRESS; break;
+        default: addressType = FDP_WRONG_ADDRESS; break;
+        }
+    }
+    return addressType;
 }
 
 FDP_Access getAccessType(char *flags)
 {
-	if (strlen(flags) < 1 || strlen(flags) > 3){
-		return FDP_WRONG_BP;
-	}
+    if (strlen(flags) < 1 || strlen(flags) > 3){
+        return FDP_WRONG_BP;
+    }
 
-	FDP_Access ReturnFlags = FDP_WRONG_BP;
-	for (size_t i = 0; i < strlen(flags); i++){
-		switch (flags[i]){
-		case 'e': ReturnFlags |= (int)FDP_EXECUTE_BP; break;
-		case 'r': ReturnFlags |= (int)FDP_READ_BP; break;
-		case 'w': ReturnFlags |= (int)FDP_WRITE_BP; break;
-		default: return FDP_WRONG_BP;
-		}
-	}
-	return ReturnFlags;
+    FDP_Access ReturnFlags = FDP_WRONG_BP;
+    for (size_t i = 0; i < strlen(flags); i++){
+        switch (flags[i]){
+        case 'e': ReturnFlags |= (int)FDP_EXECUTE_BP; break;
+        case 'r': ReturnFlags |= (int)FDP_READ_BP; break;
+        case 'w': ReturnFlags |= (int)FDP_WRITE_BP; break;
+        default: return FDP_WRONG_BP;
+        }
+    }
+    return ReturnFlags;
 }
 
 //!hbmsr r <value>
@@ -323,12 +323,12 @@ DECLARE_API(hbmsr)
     dprintf("Address %p\n", BreakpointAddress);
 
     int iBreakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_MSRHBP, -1, BreakpointAccessType, FDP_VIRTUAL_ADDRESS, BreakpointAddress, 1);
-	if (iBreakpointId >= 0){
-		dprintf("Breakpoint installed : BreakpointId %d\n", iBreakpointId);
-	}
-	else{
-		dprintf("Failed to FDP_SetBreakpoint\n");
-	}
+    if (iBreakpointId >= 0){
+        dprintf("Breakpoint installed : BreakpointId %d\n", iBreakpointId);
+    }
+    else{
+        dprintf("Failed to FDP_SetBreakpoint\n");
+    }
 
 Fail:
     return;
@@ -337,82 +337,82 @@ Fail:
 //Set an Execute breakpoint
 DECLARE_API(hba)
 {
-	ULONG64 BreakpointAddress = 0;
-	PCSTR Remainder = NULL;
+    ULONG64 BreakpointAddress = 0;
+    PCSTR Remainder = NULL;
 
-	//ULONG Bytes;
-	ULONG Data = 0;
-	HANDLE hOutputFile = NULL;
+    //ULONG Bytes;
+    ULONG Data = 0;
+    HANDLE hOutputFile = NULL;
 
-	char myArgs[1024];
-	char *argList[10];
-	int argc = 0;
-	char lastChar = '\0';
+    char myArgs[1024];
+    char *argList[10];
+    int argc = 0;
+    char lastChar = '\0';
 
-	if (strlen(args) > 1024){
-		usage();
-		goto Fail;
-	}
-	
-	strcpy_s(myArgs, sizeof(myArgs), args);
+    if (strlen(args) > 1024){
+        usage();
+        goto Fail;
+    }
+    
+    strcpy_s(myArgs, sizeof(myArgs), args);
 
-	//Argument string parsing
-	size_t len = strlen(myArgs);
-	for (size_t i = 0; i < len; i++){
-		if (myArgs[i] == ' ')
-			myArgs[i] = '\0';
+    //Argument string parsing
+    size_t len = strlen(myArgs);
+    for (size_t i = 0; i < len; i++){
+        if (myArgs[i] == ' ')
+            myArgs[i] = '\0';
 
-		if (lastChar == '\0' && myArgs[i] != '\0'){
-			argList[argc++] = &myArgs[i];
-			if (argc >= 10){
-				usage();
-				goto Fail;
-			}
-		}
-		lastChar = myArgs[i];
-	}
+        if (lastChar == '\0' && myArgs[i] != '\0'){
+            argList[argc++] = &myArgs[i];
+            if (argc >= 10){
+                usage();
+                goto Fail;
+            }
+        }
+        lastChar = myArgs[i];
+    }
 
-	if (argc != 4){
-		usage();
-		goto Fail;
-	}
+    if (argc != 4){
+        usage();
+        goto Fail;
+    }
 
-	FDP_Access BreakpointAccessType = getAccessType(argList[0]);
-	if (BreakpointAccessType == 0x0){
-		dprintf("Invalid breakpoint flags ! \n");
-		usage();
-		goto Fail;
-	}
+    FDP_Access BreakpointAccessType = getAccessType(argList[0]);
+    if (BreakpointAccessType == 0x0){
+        dprintf("Invalid breakpoint flags ! \n");
+        usage();
+        goto Fail;
+    }
 
-	FDP_AddressType BreakpointAddressType = getAdressType(argList[1]);
-	if (BreakpointAddressType == 0x0){
-		dprintf("Invalid breakpoint adress type ! \n");
-		usage();
-		goto Fail;
-	}
+    FDP_AddressType BreakpointAddressType = getAdressType(argList[1]);
+    if (BreakpointAddressType == 0x0){
+        dprintf("Invalid breakpoint adress type ! \n");
+        usage();
+        goto Fail;
+    }
 
-	//Symbol resolution, get address in hex !
-	GetExpressionEx(argList[2], &BreakpointAddress, NULL);
-	BOOL ret = GetExpressionEx(argList[2], &BreakpointAddress, NULL);
-	if (ret == false){
-		dprintf("Invalid breakpoint address ! \n");
-		usage();
-		goto Fail;
-	}
+    //Symbol resolution, get address in hex !
+    GetExpressionEx(argList[2], &BreakpointAddress, NULL);
+    BOOL ret = GetExpressionEx(argList[2], &BreakpointAddress, NULL);
+    if (ret == false){
+        dprintf("Invalid breakpoint address ! \n");
+        usage();
+        goto Fail;
+    }
 
-	uint64_t BreakpointLength = atoi(argList[3]);
-	if (BreakpointLength < 1){
-		dprintf("Invalid breakpoint length ! \n");
-		usage();
-		goto Fail;
-	}
-	
-	dprintf("AccessType:    %p\n", BreakpointAccessType);
-	dprintf("Type:          %p\n", BreakpointAddressType);
-	dprintf("Addres:        %p\n", BreakpointAddress);
-	dprintf("Length:        %d\n", BreakpointLength);
+    uint64_t BreakpointLength = atoi(argList[3]);
+    if (BreakpointLength < 1){
+        dprintf("Invalid breakpoint length ! \n");
+        usage();
+        goto Fail;
+    }
+    
+    dprintf("AccessType:    %p\n", BreakpointAccessType);
+    dprintf("Type:          %p\n", BreakpointAddressType);
+    dprintf("Addres:        %p\n", BreakpointAddress);
+    dprintf("Length:        %d\n", BreakpointLength);
 
-	int BreakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_PAGEHBP, -1, BreakpointAccessType, BreakpointAddressType, BreakpointAddress, BreakpointLength);
+    int BreakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_PAGEHBP, -1, BreakpointAccessType, BreakpointAddressType, BreakpointAddress, BreakpointLength);
     if (BreakpointId == -1){
         dprintf("Failed to install breakpoint\n");
     }
@@ -421,13 +421,13 @@ DECLARE_API(hba)
     }
 
 Fail:
-	return;
+    return;
 }
 
 
 DECLARE_API(hbl)
 {
-	dprintf("TODO !\n");
+    dprintf("TODO !\n");
 }
 
 DECLARE_API(saveinternal)
@@ -481,12 +481,12 @@ DECLARE_API(save)
         goto Fail;
     }
     //Generate command 
-	sprintf_s(Command, sizeof(Command), "$><%s", TempPath);
+    sprintf_s(Command, sizeof(Command), "$><%s", TempPath);
 
     //Close file before call !
     CloseHandle(hFile);
     hFile = INVALID_HANDLE_VALUE;
-	HRESULT Hr = pDebugControl->lpVtbl->Execute(pDebugControl, DEBUG_OUTCTL_ALL_CLIENTS, Command, DEBUG_EXECUTE_NOT_LOGGED);
+    HRESULT Hr = pDebugControl->lpVtbl->Execute(pDebugControl, DEBUG_OUTCTL_ALL_CLIENTS, Command, DEBUG_EXECUTE_NOT_LOGGED);
 
 Fail:
     if (hFile != INVALID_HANDLE_VALUE){
@@ -506,7 +506,7 @@ DECLARE_API(refresh)
     ULONG ulMemoryRead;
     char Fake[1];
     ReadMemory(0xDEADCACABABEFACE, Fake, 1, &ulMemoryRead);
-	HRESULT Hr = pDebugControl->lpVtbl->Execute(pDebugControl, DEBUG_OUTCTL_ALL_CLIENTS, "t", DEBUG_EXECUTE_NOT_LOGGED);
+    HRESULT Hr = pDebugControl->lpVtbl->Execute(pDebugControl, DEBUG_OUTCTL_ALL_CLIENTS, "t", DEBUG_EXECUTE_NOT_LOGGED);
 
 Fail:
     return;
@@ -570,7 +570,7 @@ DECLARE_API(restore)
     //Close file before call !
     CloseHandle(hFile);
     hFile = INVALID_HANDLE_VALUE;
-	HRESULT Hr = pDebugControl->lpVtbl->Execute(pDebugControl, DEBUG_OUTCTL_ALL_CLIENTS, Command, DEBUG_EXECUTE_NOT_LOGGED);
+    HRESULT Hr = pDebugControl->lpVtbl->Execute(pDebugControl, DEBUG_OUTCTL_ALL_CLIENTS, Command, DEBUG_EXECUTE_NOT_LOGGED);
     
 Fail:
     if (hFile != INVALID_HANDLE_VALUE){
@@ -609,37 +609,37 @@ Fail:
 //Clear a breakpoint !
 DECLARE_API(hbc)
 {
-	ULONG64 Value;
-	ULONG64 BreakpointId;
-	PCSTR Remainder;
+    ULONG64 Value;
+    ULONG64 BreakpointId;
+    PCSTR Remainder;
 
-	//ULONG Bytes;
-	ULONG Data = 0;
-	HANDLE hOutputFile = NULL;
+    //ULONG Bytes;
+    ULONG Data = 0;
+    HANDLE hOutputFile = NULL;
 
-	if (!pFDP){
-		dprintf("Not connected to debuggee !\n");
-		goto Fail;
-	}
+    if (!pFDP){
+        dprintf("Not connected to debuggee !\n");
+        goto Fail;
+    }
 
-	BOOL ret = GetExpressionEx(args, &Value, &Remainder);
-	if (ret == TRUE) {
-		BreakpointId = Value;
-	}
-	else{
-		usage();
-		goto Fail;
-	}
+    BOOL ret = GetExpressionEx(args, &Value, &Remainder);
+    if (ret == TRUE) {
+        BreakpointId = Value;
+    }
+    else{
+        usage();
+        goto Fail;
+    }
 
-	if (FDP_UnsetBreakpoint(pFDP, (uint8_t)BreakpointId) == true){
-		dprintf("Breakpoint removed\n");
-	}
-	else{
-		dprintf("Failed to FDP_UnsetBreakpoint\n");
-	}
+    if (FDP_UnsetBreakpoint(pFDP, (uint8_t)BreakpointId) == true){
+        dprintf("Breakpoint removed\n");
+    }
+    else{
+        dprintf("Failed to FDP_UnsetBreakpoint\n");
+    }
 
 Fail:
-	return;
+    return;
 }
 
 //!hbint 0x0E 0x00 Cr2
@@ -692,12 +692,12 @@ DECLARE_API(hbint)
     GetExpressionEx(argList[2], &Cr2, &Remainder);
 
     dprintf("FDP_InjectInterrupt %02x %08x %p \n", uInterruptionCode, uErrorceCode, Cr2);
-	if (FDP_InjectInterrupt(pFDP, 0, (uint32_t)uInterruptionCode, (uint32_t)uErrorceCode, Cr2) == true){
-		dprintf("Interrupt injected.\n");
-	}
-	else{
-		dprintf("Failed to FDP_InjectInterrupt\n");
-	}
+    if (FDP_InjectInterrupt(pFDP, 0, (uint32_t)uInterruptionCode, (uint32_t)uErrorceCode, Cr2) == true){
+        dprintf("Interrupt injected.\n");
+    }
+    else{
+        dprintf("Failed to FDP_InjectInterrupt\n");
+    }
 
 Fail:
     return;
@@ -706,13 +706,13 @@ Fail:
 //DllMain
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
+    switch (ul_reason_for_call)
+    {
+    case DLL_PROCESS_ATTACH:
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
 }

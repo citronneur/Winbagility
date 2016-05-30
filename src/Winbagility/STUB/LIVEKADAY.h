@@ -2,13 +2,13 @@
 
 typedef struct LIVEKADAY_TYPE_T_
 {
-	HANDLE      hDevice;
-	uint64_t	Cr3Value;
-	uint64_t	uFileSize;
-	uint64_t    v_KPCR;
-	uint64_t	Idtr;
-	uint64_t	Gdtr;
-	KTRAP_FRAME TrapFrame;
+    HANDLE      hDevice;
+    uint64_t    Cr3Value;
+    uint64_t    uFileSize;
+    uint64_t    v_KPCR;
+    uint64_t    Idtr;
+    uint64_t    Gdtr;
+    KTRAP_FRAME TrapFrame;
 }
 LIVEKADAY_TYPE_T;
 
@@ -20,10 +20,10 @@ bool LIVEKADAY_ReadRegister(LIVEKADAY_TYPE_T *pUserHandle, uint32_t CpuId, uint1
 bool LIVEKADAY_ReadMsr(LIVEKADAY_TYPE_T *pUserHandle, uint32_t CpuId, uint32_t MsrId, uint64_t *pMSRValue);
 bool LIVEKADAY_ReadPhysicalMemory(LIVEKADAY_TYPE_T* pUserHandle, uint8_t *pDstBuffer, uint32_t ReadSize, uint64_t PhysicalAddress);
 bool LIVEKADAY_ReadVirtualMemory(LIVEKADAY_TYPE_T* pUserHandle,
-	uint32_t CpuId,
-	uint8_t *pDstBuffer,
-	uint32_t ReadSize,
-	uint64_t VirtualAddress);
+    uint32_t CpuId,
+    uint8_t *pDstBuffer,
+    uint32_t ReadSize,
+    uint64_t VirtualAddress);
 bool LIVEKADAY_Pause(LIVEKADAY_TYPE_T *pUserHandle);
 bool LIVEKADAY_Resume(LIVEKADAY_TYPE_T *pUserHandle);
 bool LIVEKADAY_SingleStep(LIVEKADAY_TYPE_T *pUserHandle, uint32_t CpuId);

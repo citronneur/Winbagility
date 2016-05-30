@@ -22,34 +22,34 @@ DWORD Put32Pipe(HANDLE hPipe, uint8_t data);
 DWORD Put64Pipe(HANDLE hPipe, uint64_t data);
 
 inline void ttas_spinlock_lock(volatile bool *lock){
-	uint16_t test_counter = 0;
-	while (true){
-		if (*lock == 0){
-			test_counter = 0;
-			if (_InterlockedCompareExchange8((volatile char*)lock, 1, 0) == 0){
-				MemoryBarrier();
-				return;
-			}
-		}
-		else{
-			if ((test_counter & 0xFFFF) == 0xFFFF){
-				Sleep(0);
-			}
-			else{
-				test_counter++;
-			}
-		}
-	}
+    uint16_t test_counter = 0;
+    while (true){
+        if (*lock == 0){
+            test_counter = 0;
+            if (_InterlockedCompareExchange8((volatile char*)lock, 1, 0) == 0){
+                MemoryBarrier();
+                return;
+            }
+        }
+        else{
+            if ((test_counter & 0xFFFF) == 0xFFFF){
+                Sleep(0);
+            }
+            else{
+                test_counter++;
+            }
+        }
+    }
 }
 
 inline void ttas_spinlock_unlock(volatile bool *lock){
-	*lock = 0;
-	MemoryBarrier();
-	return;
+    *lock = 0;
+    MemoryBarrier();
+    return;
 }
 
 inline uint64_t _rol64(uint64_t v, uint64_t s){
-	return (v << s) | (v >> (64 - s));
+    return (v << s) | (v >> (64 - s));
 }
 
 #endif //__UTILS_H__

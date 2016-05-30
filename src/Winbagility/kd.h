@@ -11,8 +11,8 @@
 #define DBGKD_QUERY_MEMORY_EXECUTE  0x04
 #define DBGKD_QUERY_MEMORY_FIXED    0x08
 
-#define KD_DATA_PACKET						0x30303030
-#define KD_CONTROL_PACKET					0x69696969
+#define KD_DATA_PACKET                        0x30303030
+#define KD_CONTROL_PACKET                    0x69696969
 //
 // Wait State Change Types
 //
@@ -67,22 +67,22 @@
 //New in v8
 #define DbgKdGetRegisterApi                 0x0000315F
 
-#define DbgKdPrintStringApi					0x00003230
-#define DbgKdGetStringApi					0x00003231
+#define DbgKdPrintStringApi                    0x00003230
+#define DbgKdGetStringApi                    0x00003231
 
-#define KD_PACKET_TYPE_MANIP	    2
-#define KD_PACKET_TYPE_ACK		    4
-#define KD_PACKET_TYPE_RESEND	    5
-#define KD_PACKET_TYPE_RESET	    6
+#define KD_PACKET_TYPE_MANIP        2
+#define KD_PACKET_TYPE_ACK            4
+#define KD_PACKET_TYPE_RESEND        5
+#define KD_PACKET_TYPE_RESET        6
 #define KD_PACKET_TYPE_STATE_CHANGE 7
-#define KD_PACKET_TYPE_IO		    11
+#define KD_PACKET_TYPE_IO            11
 
 #pragma pack(push)
 #pragma warning( disable : 4200 )
 
 /*typedef struct uint128_t_ {
-	uint64_t a;
-	uint64_t b;
+    uint64_t a;
+    uint64_t b;
 }uint128_t;*/
 
 typedef struct DECLSPEC_ALIGN(16) _DBGKD_CONTINUE2
@@ -123,27 +123,27 @@ typedef struct _AMD64_M128 {
 
 typedef struct _declspec(align(16)) XSAVE_FORMAT64_
 {
-	uint16_t    ControlWord;
-	uint16_t    StatusWord;
-	uint8_t     TagWord;
-	uint8_t     Reserved1;
-	uint16_t    ErrorOpcode;
-	uint32_t    ErrorOffset;
-	uint16_t    ErrorSelector;
-	uint16_t    Reserved2;
-	uint32_t    DataOffset;
-	uint16_t    DataSelector;
-	uint16_t    Reserved3;
-	uint32_t    MxCsr;
-	uint32_t    MxCsr_Mask;
-	uint128_t   FloatRegisters[8];
+    uint16_t    ControlWord;
+    uint16_t    StatusWord;
+    uint8_t     TagWord;
+    uint8_t     Reserved1;
+    uint16_t    ErrorOpcode;
+    uint32_t    ErrorOffset;
+    uint16_t    ErrorSelector;
+    uint16_t    Reserved2;
+    uint32_t    DataOffset;
+    uint16_t    DataSelector;
+    uint16_t    Reserved3;
+    uint32_t    MxCsr;
+    uint32_t    MxCsr_Mask;
+    uint128_t   FloatRegisters[8];
 
 #if defined(_WIN64)
-	uint128_t   XmmRegisters[16];
-	uint8_t     Reserved4[96];
+    uint128_t   XmmRegisters[16];
+    uint8_t     Reserved4[96];
 #else
-	uint128_t   XmmRegisters[8];
-	uint8_t     Reserved4[224];
+    uint128_t   XmmRegisters[8];
+    uint8_t     Reserved4[224];
 #endif
 } XSAVE_FORMAT64;
 
@@ -239,53 +239,53 @@ typedef struct _DBGKD_RESTORE_BREAKPOINT
 
 typedef struct _DBGKD_GET_VERSION_API64
 {
-	uint16_t	MajorVersion;
-	uint16_t	MinorVersion;
-	uint16_t	ProtocolVersion;
-	uint16_t	Flags;
-	uint16_t	MachineType;
-	uint8_t		MaxPacketType;
-	uint8_t		MaxStateChange;
-	uint8_t		MaxManipulate;
-	uint8_t		Simulation;
-	uint16_t	Unknown1; //0x0000
-    uint64_t	KernelImageBase;
-	uint64_t	PsLoadedModuleList;
-	uint64_t	DebuggerDataList;
-	uint64_t	Unknown2; //0xABABABABFDFDFDFD
-	uint64_t	Unknown3; //0xABABABABABABABAB
+    uint16_t    MajorVersion;
+    uint16_t    MinorVersion;
+    uint16_t    ProtocolVersion;
+    uint16_t    Flags;
+    uint16_t    MachineType;
+    uint8_t        MaxPacketType;
+    uint8_t        MaxStateChange;
+    uint8_t        MaxManipulate;
+    uint8_t        Simulation;
+    uint16_t    Unknown1; //0x0000
+    uint64_t    KernelImageBase;
+    uint64_t    PsLoadedModuleList;
+    uint64_t    DebuggerDataList;
+    uint64_t    Unknown2; //0xABABABABFDFDFDFD
+    uint64_t    Unknown3; //0xABABABABABABABAB
 } DBGKD_GET_VERSION_API64, *PDBGKD_GET_VERSION_API64;
 
 typedef struct _DBGKD_WRITE_MEMORY64
 {
-    UINT64	TargetBaseAddress;
-    ULONG	TransferCount;
-    ULONG	ActualBytesWritten;
-    UINT64	Unknown1; //Don't know... But Useless Windbg is OK, if setted 0x00
-    UINT64	Unknown2; //Don't know... But Useless Windbg is OK, if setted 0x00
-    UINT64	Unknown3; //Don't know... But Useless Windbg is OK, if setted 0x00
-    UINT8	Data[0];
+    UINT64    TargetBaseAddress;
+    ULONG    TransferCount;
+    ULONG    ActualBytesWritten;
+    UINT64    Unknown1; //Don't know... But Useless Windbg is OK, if setted 0x00
+    UINT64    Unknown2; //Don't know... But Useless Windbg is OK, if setted 0x00
+    UINT64    Unknown3; //Don't know... But Useless Windbg is OK, if setted 0x00
+    UINT8    Data[0];
 } DBGKD_WRITE_MEMORY64, *PDBGKD_WRITE_MEMORY64;
 
 typedef struct _DBGKD_READ_MEMORY64
 {
-    UINT64	TargetBaseAddress;
-    UINT32	TransferCount;
-    UINT32	ActualBytesRead;
-    UINT64	Unknown1; //Don't know... But Useless Windbg is OK, if setted 0x00
-    UINT64	Unknown2; //Don't know... But Useless Windbg is OK, if setted 0x00
-    UINT64	Unknown3; //Don't know... But Useless Windbg is OK, if setted 0x00
-    UINT8	Data[0];
+    UINT64    TargetBaseAddress;
+    UINT32    TransferCount;
+    UINT32    ActualBytesRead;
+    UINT64    Unknown1; //Don't know... But Useless Windbg is OK, if setted 0x00
+    UINT64    Unknown2; //Don't know... But Useless Windbg is OK, if setted 0x00
+    UINT64    Unknown3; //Don't know... But Useless Windbg is OK, if setted 0x00
+    UINT8    Data[0];
 } DBGKD_READ_MEMORY64, *PDBGKD_READ_MEMORY64;
 
 //
 // query memory
 //
 typedef struct _DBGKD_QUERY_MEMORY{
-    uint64_t	Address;
-	uint64_t	Reserved;
-	uint32_t	AddressSpace;
-	uint32_t	Flags;
+    uint64_t    Address;
+    uint64_t    Reserved;
+    uint32_t    AddressSpace;
+    uint32_t    Flags;
 }DBGKD_QUERY_MEMORY;
 
 
@@ -375,7 +375,7 @@ typedef struct DECLSPEC_ALIGN(16) _CONTEXT64_T_{
 
 typedef struct _DBGKD_GET_CONTEXT{
     uint64_t u[4]; //Aligment
-	CONTEXT64_T Context;
+    CONTEXT64_T Context;
 }DBGKD_GET_CONTEXT;
 
 typedef struct _DBGKD_SEARCH_MEMORY{
@@ -410,31 +410,31 @@ typedef struct _DBGKD_MANIPULATE_STATE64
     NTSTATUS ReturnStatus;
     union
     {
-        DBGKD_READ_MEMORY64				ReadMemory;
-        DBGKD_WRITE_MEMORY64			WriteMemory;
-        DBGKD_GET_CONTEXT				GetContext;
-        //DBGKD_SET_CONTEXT				SetContext;
-        DBGKD_WRITE_BREAKPOINT64		WriteBreakPoint;
-        DBGKD_RESTORE_BREAKPOINT		RestoreBreakPoint;
-        /*DBGKD_CONTINUE				Continue;*/
-        DBGKD_CONTINUE2					Continue2;
-        /*DBGKD_READ_WRITE_IO64			ReadWriteIo;
-        DBGKD_READ_WRITE_IO_EXTENDED64	ReadWriteIoExtended;
-        DBGKD_QUERY_SPECIAL_CALLS		QuerySpecialCalls;
-        DBGKD_SET_SPECIAL_CALL64		SetSpecialCall;
+        DBGKD_READ_MEMORY64                ReadMemory;
+        DBGKD_WRITE_MEMORY64            WriteMemory;
+        DBGKD_GET_CONTEXT                GetContext;
+        //DBGKD_SET_CONTEXT                SetContext;
+        DBGKD_WRITE_BREAKPOINT64        WriteBreakPoint;
+        DBGKD_RESTORE_BREAKPOINT        RestoreBreakPoint;
+        /*DBGKD_CONTINUE                Continue;*/
+        DBGKD_CONTINUE2                    Continue2;
+        /*DBGKD_READ_WRITE_IO64            ReadWriteIo;
+        DBGKD_READ_WRITE_IO_EXTENDED64    ReadWriteIoExtended;
+        DBGKD_QUERY_SPECIAL_CALLS        QuerySpecialCalls;
+        DBGKD_SET_SPECIAL_CALL64        SetSpecialCall;
         DBGKD_SET_INTERNAL_BREAKPOINT64 SetInternalBreakpoint;
         DBGKD_GET_INTERNAL_BREAKPOINT64 GetInternalBreakpoint;
-        DBGKD_GET_VERSION64				GetVersion64;
-        DBGKD_BREAKPOINTEX				BreakPointEx;*/
-        DBGKD_READ_WRITE_MSR			ReadWriteMsr;
-        DBGKD_SEARCH_MEMORY				SearchMemory;
-        /*DBGKD_GET_SET_BUS_DATA		GetSetBusData;
-        DBGKD_FILL_MEMORY				FillMemory;*/
-        DBGKD_QUERY_MEMORY				QueryMemory;
-        /*DBGKD_SWITCH_PARTITION		SwitchPartition;*/
-        DBGKD_GET_REGISTER64			GetRegisters;
-        DBGKD_GET_VERSION_API64			DbgGetVersion;
-        uint8_t							data[0]; //XXX: for testing
+        DBGKD_GET_VERSION64                GetVersion64;
+        DBGKD_BREAKPOINTEX                BreakPointEx;*/
+        DBGKD_READ_WRITE_MSR            ReadWriteMsr;
+        DBGKD_SEARCH_MEMORY                SearchMemory;
+        /*DBGKD_GET_SET_BUS_DATA        GetSetBusData;
+        DBGKD_FILL_MEMORY                FillMemory;*/
+        DBGKD_QUERY_MEMORY                QueryMemory;
+        /*DBGKD_SWITCH_PARTITION        SwitchPartition;*/
+        DBGKD_GET_REGISTER64            GetRegisters;
+        DBGKD_GET_VERSION_API64            DbgGetVersion;
+        uint8_t                            data[0]; //XXX: for testing
     };
 } DBGKD_MANIPULATE_STATE64, *PDBGKD_MANIPULATE_STATE64;
 
@@ -469,13 +469,13 @@ typedef struct _AMD64_DBGKD_CONTROL_REPORT
     USHORT SegDs;
     USHORT SegEs;
     USHORT SegFs;
-	USHORT SegSs;
+    USHORT SegSs;
 } AMD64_DBGKD_CONTROL_REPORT, *PAMD64_DBGKD_CONTROL_REPORT;
 
 typedef struct _X86_DBGKD_CONTROL_REPORT
 {
     uint32_t Dr6;
-	uint32_t Dr7;
+    uint32_t Dr7;
     //ULONG EFlags;
     USHORT InstructionCount;
     USHORT ReportFlags;
@@ -484,18 +484,18 @@ typedef struct _X86_DBGKD_CONTROL_REPORT
     USHORT SegDs;
     USHORT SegEs;
     USHORT SegFs;
-	USHORT SegSs;
+    USHORT SegSs;
 } X86_DBGKD_CONTROL_REPORT, *PX86_DBGKD_CONTROL_REPORT;
 
 typedef struct _DBGKD_WAIT_STATE_CHANGE64_{
-    uint32_t	ApiNumber;
-    uint16_t	NewState;
-    uint16_t	ProcessorId;
-    USHORT		ProcessorLevel;
-    USHORT		Processor;
-    ULONG		NumberProcessors;
-    ULONG64		Thread;
-    ULONG64		ProgramCounter;
+    uint32_t    ApiNumber;
+    uint16_t    NewState;
+    uint16_t    ProcessorId;
+    USHORT        ProcessorLevel;
+    USHORT        Processor;
+    ULONG        NumberProcessors;
+    ULONG64        Thread;
+    ULONG64        ProgramCounter;
     union{
         DBGKM_EXCEPTION64 Exception;
     };
@@ -504,10 +504,10 @@ typedef struct _DBGKD_WAIT_STATE_CHANGE64_{
 
 typedef struct KD_PACKET_T_{
     uint32_t Leader;
-	uint16_t Type;
-	uint16_t Length;
-	uint32_t Id;
-	uint32_t Checksum;
+    uint16_t Type;
+    uint16_t Length;
+    uint32_t Id;
+    uint32_t Checksum;
     union{
         UINT32 ApiNumber;
         DBGKD_MANIPULATE_STATE64 ManipulateState64;
@@ -533,8 +533,8 @@ typedef struct _KSPECIAL_REGISTERS64_T_{
     uint64_t KernelDr3;
     uint64_t KernelDr6;
     uint64_t KernelDr7;
-	KDESCRIPTOR_T Gdtr;
-	KDESCRIPTOR_T Idtr;
+    KDESCRIPTOR_T Gdtr;
+    KDESCRIPTOR_T Idtr;
     uint16_t Tr;
     uint16_t Ldtr;
     uint32_t MxCsr;
@@ -556,7 +556,7 @@ typedef struct _KSPECIAL_REGISTERS64_T_{
 typedef struct _KPROCESSOR_STATE64
 {
     KSPECIAL_REGISTERS64_T SpecialRegisters;
-	CONTEXT64_T ContextFrame;
+    CONTEXT64_T ContextFrame;
 }_KPROCESSOR_STATE64, *P_KPROCESSOR_STATE64;
 #pragma pack(pop)
 

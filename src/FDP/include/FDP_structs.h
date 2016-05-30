@@ -55,7 +55,7 @@ typedef struct _FDP_SetBreakpoint_req
 #pragma pack(push, 1)
 #pragma warning( disable : 4200 )
 
-#define _1M	1024*1024
+#define _1M    1024*1024
 #define FDP_MAX_DATA_SIZE   10*_1M
 
 typedef _declspec(align(1)) struct FDP_SHM_CANAL_
@@ -82,7 +82,7 @@ typedef _declspec(align(1)) struct FDP_SHM_
     uint8_t InputBuffer[FDP_MAX_DATA_SIZE];     //Used as temporary input buffer
     uint8_t OutputBuffer[FDP_MAX_DATA_SIZE];    //Used as temporary output buffer
 
-    FDP_SERVER_INTERFACE_T	*pFdpServer;
+    FDP_SERVER_INTERFACE_T    *pFdpServer;
 } FDP_SHM;
 
 #define FDP_SHM_SHARED_SIZE sizeof(FDP_SHM_SHARED)

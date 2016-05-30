@@ -10,7 +10,7 @@ typedef struct CRASH_TYPE_T_
     uint64_t    v_KPCR;
     uint64_t    GDTRB;
     uint64_t    IDTRB;
-	KTRAP_FRAME TrapFrame;
+    KTRAP_FRAME TrapFrame;
 }CRASH_TYPE_T;
 
 

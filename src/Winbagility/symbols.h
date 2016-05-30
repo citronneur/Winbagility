@@ -2,9 +2,9 @@
 #define __SYMBOLS_H__
 
 typedef struct PDB_PARSER_T_ {
-	HANDLE      hProcess;
-	uint64_t    Base;
-	void*       pBuffer;
+    HANDLE      hProcess;
+    uint64_t    Base;
+    void*       pBuffer;
 }PDB_PARSER_T;
 
 

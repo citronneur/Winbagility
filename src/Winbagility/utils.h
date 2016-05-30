@@ -23,13 +23,13 @@
 #define LogFlow() 
 #endif
 
-#define MSR_EFER			0xC0000080
-#define MSR_STAR			0xC0000081
-#define MSR_LSTAR			0xC0000082
-#define MSR_CSTAR			0xC0000084
-#define MSR_SYSCALL_MASK	0xC0000084
-#define MSR_GS_BASE			0xC0000101
-#define MSR_KERNEL_GS_BASE	0xC0000102
+#define MSR_EFER            0xC0000080
+#define MSR_STAR            0xC0000081
+#define MSR_LSTAR            0xC0000082
+#define MSR_CSTAR            0xC0000084
+#define MSR_SYSCALL_MASK    0xC0000084
+#define MSR_GS_BASE            0xC0000101
+#define MSR_KERNEL_GS_BASE    0xC0000102
 
 #define _1G 1*1024*1024*1024
 #ifndef _1M
@@ -38,8 +38,8 @@
 #define _2M 2*_1M
 #define _4K 4096
 
-#define KERNEL_SPACE_START			0xFFFFF80000000000
-#define KERNEL_SPACE_START_X86			0x80000000
+#define KERNEL_SPACE_START            0xFFFFF80000000000
+#define KERNEL_SPACE_START_X86            0x80000000
 
 void         printTime();
 int          roundup16(int value);

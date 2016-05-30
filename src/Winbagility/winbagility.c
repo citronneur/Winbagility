@@ -42,14 +42,14 @@ bool CreateWinbagilityInterface(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, char *pS
         pWinbagilityCtx->pfnPause = (pfnPause_t)GDB_Pause;
         pWinbagilityCtx->pfnWriteRegister = (pfnWriteRegister_t)GDB_WriteRegister;
         pWinbagilityCtx->pfnUnsetBreakpoint = (pfnUnsetBreakpoint_t)GDB_UnsetBreakpoint;
-		pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)GDB_GetFxState64;
-		pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)GDB_SetFxState64;
+        pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)GDB_GetFxState64;
+        pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)GDB_SetFxState64;
         pWinbagilityCtx->pfnReadPhysicalMemory = (pfnReadPhysicalMemory_t)GDB_ReadPhysicalMemory;
-		pWinbagilityCtx->pfnGetCpuState = (pfnGetCpuState_t)GDB_GetCpuState;
-		pWinbagilityCtx->pfnSetBreakpoint = (pfnSetBreakpoint_t)GDB_SetBreakpoint;
-		pWinbagilityCtx->pfnWriteVirtualMemory = (pfnWriteVirtualMemory_t)GDB_WriteVirtualMemory;
+        pWinbagilityCtx->pfnGetCpuState = (pfnGetCpuState_t)GDB_GetCpuState;
+        pWinbagilityCtx->pfnSetBreakpoint = (pfnSetBreakpoint_t)GDB_SetBreakpoint;
+        pWinbagilityCtx->pfnWriteVirtualMemory = (pfnWriteVirtualMemory_t)GDB_WriteVirtualMemory;
 
-		//TODO !
+        //TODO !
         /*pWinbagilityCtx->pfnVirtualToPhysical = (pfnVirtualToPhysical_t)GDB_VirtualToPhysical;
         pWinbagilityCtx->pfnWritePhysicalMemory = (pfnWritePhysicalMemory_t)GDB_WritePhysicalMemory;
         pWinbagilityCtx->pfnSearchPhysicalMemory = (pfnSearchPhysicalMemory_t)GDB_SearchPhysicalMemory;
@@ -71,8 +71,8 @@ bool CreateWinbagilityInterface(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, char *pS
         pWinbagilityCtx->pfnPause = (pfnPause_t)CRASH_Pause;
         pWinbagilityCtx->pfnResume = (pfnResume_t)CRASH_Resume;
         pWinbagilityCtx->pfnUnsetBreakpoint = (pfnUnsetBreakpoint_t)CRASH_UnsetBreakpoint;
-		pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)CRASH_GetFxState64;
-		pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)CRASH_SetFxState64;
+        pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)CRASH_GetFxState64;
+        pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)CRASH_SetFxState64;
         pWinbagilityCtx->pfnWriteRegister = (pfnWriteRegister_t)CRASH_WriteRegister;
         pWinbagilityCtx->pfnSingleStep = (pfnSingleStep_t)CRASH_SingleStep;
         pWinbagilityCtx->pfnWritePhysicalMemory = (pfnWritePhysicalMemory_t)CRASH_WritePhysicalMemory;
@@ -82,29 +82,29 @@ bool CreateWinbagilityInterface(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, char *pS
         return true;
     }
 
-	if (strcmp(pStubName, "LIVEKADAY") == 0){
-		//Prepare LIVEKADAY Interface
-		pWinbagilityCtx->CurrentMode = StubTypeLiveKaDay;
-		pWinbagilityCtx->pfnOpen = (pfnOpen_t)LIVEKADAY_Open;
-		pWinbagilityCtx->pfnInit = (pfnInit_t)LIVEKADAY_Init;
-		pWinbagilityCtx->pfnGetPhysicalMemorySize = (pfnGetPhysicalMemorySize_t)LIVEKADAY_GetPhysicalMemorySize;
-		pWinbagilityCtx->pfnReadRegister = (pfnReadRegister_t)LIVEKADAY_ReadRegister;
-		pWinbagilityCtx->pfnReadMsr = (pfnReadMsr_t)LIVEKADAY_ReadMsr;
-		pWinbagilityCtx->pfnReadVirtualMemory = (pfnReadVirtualMemory_t)LIVEKADAY_ReadVirtualMemory;
-		pWinbagilityCtx->pfnReadPhysicalMemory = (pfnReadPhysicalMemory_t)LIVEKADAY_ReadPhysicalMemory;
-		pWinbagilityCtx->pfnPause = (pfnPause_t)LIVEKADAY_Pause;
-		pWinbagilityCtx->pfnResume = (pfnResume_t)LIVEKADAY_Resume;
-		pWinbagilityCtx->pfnUnsetBreakpoint = (pfnUnsetBreakpoint_t)LIVEKADAY_UnsetBreakpoint;
-		pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)LIVEKADAY_GetFxState64;
-		pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)LIVEKADAY_SetFxState64;
-		pWinbagilityCtx->pfnWriteRegister = (pfnWriteRegister_t)LIVEKADAY_WriteRegister;
-		pWinbagilityCtx->pfnSingleStep = (pfnSingleStep_t)LIVEKADAY_SingleStep;
-		pWinbagilityCtx->pfnWritePhysicalMemory = (pfnWritePhysicalMemory_t)LIVEKADAY_WritePhysicalMemory;
-		pWinbagilityCtx->pfnWriteVirtualMemory = (pfnWriteVirtualMemory_t)LIVEKADAY_WriteVirtuallMemory;
-		pWinbagilityCtx->pfnSetBreakpoint = (pfnSetBreakpoint_t)LIVEKADAY_SetBreakpoint;
-		pWinbagilityCtx->pfnGetCpuState = (pfnGetCpuState_t)LIVEKADAY_GetCpuState;
-		return true;
-	}
+    if (strcmp(pStubName, "LIVEKADAY") == 0){
+        //Prepare LIVEKADAY Interface
+        pWinbagilityCtx->CurrentMode = StubTypeLiveKaDay;
+        pWinbagilityCtx->pfnOpen = (pfnOpen_t)LIVEKADAY_Open;
+        pWinbagilityCtx->pfnInit = (pfnInit_t)LIVEKADAY_Init;
+        pWinbagilityCtx->pfnGetPhysicalMemorySize = (pfnGetPhysicalMemorySize_t)LIVEKADAY_GetPhysicalMemorySize;
+        pWinbagilityCtx->pfnReadRegister = (pfnReadRegister_t)LIVEKADAY_ReadRegister;
+        pWinbagilityCtx->pfnReadMsr = (pfnReadMsr_t)LIVEKADAY_ReadMsr;
+        pWinbagilityCtx->pfnReadVirtualMemory = (pfnReadVirtualMemory_t)LIVEKADAY_ReadVirtualMemory;
+        pWinbagilityCtx->pfnReadPhysicalMemory = (pfnReadPhysicalMemory_t)LIVEKADAY_ReadPhysicalMemory;
+        pWinbagilityCtx->pfnPause = (pfnPause_t)LIVEKADAY_Pause;
+        pWinbagilityCtx->pfnResume = (pfnResume_t)LIVEKADAY_Resume;
+        pWinbagilityCtx->pfnUnsetBreakpoint = (pfnUnsetBreakpoint_t)LIVEKADAY_UnsetBreakpoint;
+        pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)LIVEKADAY_GetFxState64;
+        pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)LIVEKADAY_SetFxState64;
+        pWinbagilityCtx->pfnWriteRegister = (pfnWriteRegister_t)LIVEKADAY_WriteRegister;
+        pWinbagilityCtx->pfnSingleStep = (pfnSingleStep_t)LIVEKADAY_SingleStep;
+        pWinbagilityCtx->pfnWritePhysicalMemory = (pfnWritePhysicalMemory_t)LIVEKADAY_WritePhysicalMemory;
+        pWinbagilityCtx->pfnWriteVirtualMemory = (pfnWriteVirtualMemory_t)LIVEKADAY_WriteVirtuallMemory;
+        pWinbagilityCtx->pfnSetBreakpoint = (pfnSetBreakpoint_t)LIVEKADAY_SetBreakpoint;
+        pWinbagilityCtx->pfnGetCpuState = (pfnGetCpuState_t)LIVEKADAY_GetCpuState;
+        return true;
+    }
 
     if (strcmp(pStubName, "FDP") == 0){
         //Prepare FDP Interface !
@@ -126,8 +126,8 @@ bool CreateWinbagilityInterface(WINBAGILITY_CONTEXT_T *pWinbagilityCtx, char *pS
         pWinbagilityCtx->pfnSearchPhysicalMemory = (pfnSearchPhysicalMemory_t)FDP_SearchPhysicalMemory;
         pWinbagilityCtx->pfnSetBreakpoint = (pfnSetBreakpoint_t)FDP_SetBreakpoint;
         pWinbagilityCtx->pfnGetCpuState = (pfnGetCpuState_t)FDP_GetCpuState;
-		pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)FDP_GetFxState64;
-		pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)FDP_SetFxState64;
+        pWinbagilityCtx->pfnGetFxState64 = (pfnGetFxState64_t)FDP_GetFxState64;
+        pWinbagilityCtx->pfnSetFxState64 = (pfnSetFxState64_t)FDP_SetFxState64;
         pWinbagilityCtx->pfnReadMsr = (pfnReadMsr_t)FDP_ReadMsr;
         pWinbagilityCtx->pfnWriteMsr = (pfnWriteMsr_t)FDP_WriteMsr;
         pWinbagilityCtx->pfnReboot = (pfnReboot_t)FDP_Reboot;
@@ -146,10 +146,10 @@ int main(int argc, char* argv[], char *env)
     //Tests 
     //return startKDProxy();
 
-	/*argc = 4;
-	argv[1] = "\\\\.\\pipe\\client";
-	argv[2] = "GDB";
-	argv[3] = "127.0.0.1:8864";*/
+    /*argc = 4;
+    argv[1] = "\\\\.\\pipe\\client";
+    argv[2] = "GDB";
+    argv[3] = "127.0.0.1:8864";*/
 
     int iReturnCode = -1;
     WINBAGILITY_CONTEXT_T *pWinbagilityCtx = NULL;
@@ -182,10 +182,10 @@ int main(int argc, char* argv[], char *env)
     //Connection to the stub
     pWinbagilityCtx->pUserHandle = NULL;
     pWinbagilityCtx->pUserHandle = pWinbagilityCtx->pfnOpen(pWinbagilityCtx->pStubOpenArg);
-	if (pWinbagilityCtx->pUserHandle == NULL){
+    if (pWinbagilityCtx->pUserHandle == NULL){
         printf("Failed to StubOpen(StubName:%s StubOpenArg:%s)\n", pWinbagilityCtx->pStubName, pWinbagilityCtx->pStubOpenArg);
-		goto Clean;
-	}
+        goto Clean;
+    }
 
     //Init Stub
     if (pWinbagilityCtx->pfnInit(pWinbagilityCtx->pUserHandle) == false){
@@ -215,7 +215,7 @@ Clean:
     if (pWinbagilityCtx != NULL){
         free(pWinbagilityCtx);
     }
-	getchar();
+    getchar();
     return iReturnCode;
 }
 

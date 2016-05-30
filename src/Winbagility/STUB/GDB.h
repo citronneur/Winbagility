@@ -2,13 +2,13 @@
 #include "FDP.h"
 
 typedef struct GDB_TYPE_T_{
-	SOCKET		Sock;
-	bool		bInContinue;
-	uint64_t	HardwareBreakpoint[4];
-    uint64_t	Kpcr;
-    uint64_t	Idtrb;
-    uint64_t	Gdtrb;
-	bool		bIsX86;
+    SOCKET        Sock;
+    bool        bInContinue;
+    uint64_t    HardwareBreakpoint[4];
+    uint64_t    Kpcr;
+    uint64_t    Idtrb;
+    uint64_t    Gdtrb;
+    bool        bIsX86;
 }GDB_TYPE_T;
 
 

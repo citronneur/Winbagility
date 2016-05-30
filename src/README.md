@@ -1,8 +1,8 @@
 1. Activate test signing
 --------------------------
 Winbagility ships with a modified version of VirtualBox, obviously not signed by Oracle. In order to install it, you need to activate test mode :
-	open an admin prompt and type "bcdedit \set TESTSIGNING ON"
-	restart your PC.
+    open an admin prompt and type "bcdedit \set TESTSIGNING ON"
+    restart your PC.
 You should see "Mode Test" along with your Windows version number (major and build) on the bottom right corner of the Desktop.
 
 2. Install VBoxDrv catalog

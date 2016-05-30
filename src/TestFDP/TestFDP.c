@@ -187,75 +187,75 @@ bool testReadWriteVirtualMemorySpeed(FDP_SHM* pFDP){
 
 bool testReadWritePhysicalMemorySpeed(FDP_SHM* pFDP)
 {
-	printf("%s ...", __FUNCTION__);
+    printf("%s ...", __FUNCTION__);
 
-	TimerOut = false;
-	TimerGo = true;
-	uint64_t ReadCount = 0;
-	while (TimerOut == false) {
-		uint8_t OriginalPage[4096];
-		if (FDP_ReadPhysicalMemory(pFDP, OriginalPage, sizeof(OriginalPage), 0) == false) {
-			printf("Failed to read VirtualMemory !\n");
-			return false;
-		}
-		ReadCount++;
-	}
+    TimerOut = false;
+    TimerGo = true;
+    uint64_t ReadCount = 0;
+    while (TimerOut == false) {
+        uint8_t OriginalPage[4096];
+        if (FDP_ReadPhysicalMemory(pFDP, OriginalPage, sizeof(OriginalPage), 0) == false) {
+            printf("Failed to read VirtualMemory !\n");
+            return false;
+        }
+        ReadCount++;
+    }
 
-	int ReadCountPerSecond = (int)ReadCount / iTimerDelay;
-	if (ReadCountPerSecond < 400000) {
-		printf("Too Slow !\n");
-		return false;
-	}
+    int ReadCountPerSecond = (int)ReadCount / iTimerDelay;
+    if (ReadCountPerSecond < 400000) {
+        printf("Too Slow !\n");
+        return false;
+    }
 
-	printf("[OK] %d/s\n", ReadCountPerSecond);
-	return true;
+    printf("[OK] %d/s\n", ReadCountPerSecond);
+    return true;
 }
 
 bool testReadLargePhysicalMemory(FDP_SHM*  pFDP)
 {
-	printf("%s ...", __FUNCTION__);
+    printf("%s ...", __FUNCTION__);
 
-	uint8_t *pBuffer = (uint8_t*)malloc((50 * _1M));
-	if (pBuffer == NULL) {
-		printf("Failed to malloc\n");
-		return false;
-	}
+    uint8_t *pBuffer = (uint8_t*)malloc((50 * _1M));
+    if (pBuffer == NULL) {
+        printf("Failed to malloc\n");
+        return false;
+    }
 
-	uint64_t Cr3;
-	FDP_ReadRegister(pFDP, 0, FDP_CR3_REGISTER, &Cr3);
+    uint64_t Cr3;
+    FDP_ReadRegister(pFDP, 0, FDP_CR3_REGISTER, &Cr3);
 
-	if (FDP_ReadPhysicalMemory(pFDP, pBuffer, 49 * _1M, Cr3) == false) {
-		printf("Failed to FDP_ReadPhysicalMemory\n");
-		free(pBuffer);
-		return false;
-	}
+    if (FDP_ReadPhysicalMemory(pFDP, pBuffer, 49 * _1M, Cr3) == false) {
+        printf("Failed to FDP_ReadPhysicalMemory\n");
+        free(pBuffer);
+        return false;
+    }
 
-	free(pBuffer);
-	printf("[OK]\n");
-	return true;
+    free(pBuffer);
+    printf("[OK]\n");
+    return true;
 }
 
 //TODO: find contig virtual memory...
 bool testReadLargeVirtualMemory(FDP_SHM*  pFDP)
 {
-	printf("%s ...", __FUNCTION__);
+    printf("%s ...", __FUNCTION__);
 
-	uint8_t *pBuffer = (uint8_t*)malloc(50 * _1M);
-	uint64_t originalMSRValue;
-	if (FDP_ReadMsr(pFDP, 0, MSR_LSTAR, &originalMSRValue) == false) {
-		printf("Failed to read MSRValue !\n");
-		free(pBuffer);
-		return false;
-	}
+    uint8_t *pBuffer = (uint8_t*)malloc(50 * _1M);
+    uint64_t originalMSRValue;
+    if (FDP_ReadMsr(pFDP, 0, MSR_LSTAR, &originalMSRValue) == false) {
+        printf("Failed to read MSRValue !\n");
+        free(pBuffer);
+        return false;
+    }
 
-	if (FDP_ReadVirtualMemory(pFDP, 0, pBuffer, 1 * _1M, originalMSRValue) == false) {
-		free(pBuffer);
-		return false;
-	}
+    if (FDP_ReadVirtualMemory(pFDP, 0, pBuffer, 1 * _1M, originalMSRValue) == false) {
+        free(pBuffer);
+        return false;
+    }
 
-	free(pBuffer);
-	printf("[OK]\n");
-	return true;
+    free(pBuffer);
+    printf("[OK]\n");
+    return true;
 }
 
 bool testReadWriteVirtualMemory(FDP_SHM* pFDP)
@@ -323,7 +323,7 @@ bool testGetStatePerformance(FDP_SHM* pFDP)
         ReadCount++;
     }
 
-	int ReadPerSecond = (int)(ReadCount / TimerGetDelay());
+    int ReadPerSecond = (int)(ReadCount / TimerGetDelay());
     printf("[OK] %d/s\n", ReadPerSecond);
     return true;
 }
@@ -669,10 +669,10 @@ bool testMultipleVirtualSyscallBP(FDP_SHM* pFDP, FDP_BreakpointType BreakpointTy
 bool testLargeVirtualPageSyscallBP(FDP_SHM* pFDP){
     printf("%s ...", __FUNCTION__);
 
-	if (FDP_Pause(pFDP) == false){
-		printf("Failed to pause !\n");
-		return false;
-	}
+    if (FDP_Pause(pFDP) == false){
+        printf("Failed to pause !\n");
+        return false;
+    }
     uint64_t originalMSRValue;
     if (FDP_ReadMsr(pFDP, 0, MSR_LSTAR, &originalMSRValue) == false){
         printf("Failed to read MSRValue !\n");
@@ -701,7 +701,7 @@ bool testLargeVirtualPageSyscallBP(FDP_SHM* pFDP){
             && !(state & FDP_STATE_DEBUGGER_ALERTED)){
             i++;
             //FDP_State state;// = 0;
-			printf(".");
+            printf(".");
             if (FDP_UnsetBreakpoint(pFDP, breakpointId) == false){
                 printf("Failed to remove page breakpoint !\n");
                 return false;
@@ -733,10 +733,10 @@ bool testLargeVirtualPageSyscallBP(FDP_SHM* pFDP){
         return false;
     }
 
-	if (FDP_Resume(pFDP) == false){
-		printf("Failed to resume !\n");
-		return false;
-	}
+    if (FDP_Resume(pFDP) == false){
+        printf("Failed to resume !\n");
+        return false;
+    }
 
     printf("[OK]\n");
     return true;
@@ -772,37 +772,37 @@ bool testLargePhysicalPageSyscallBP(FDP_SHM* pFDP)
 
     int i = 0;
     while (i < 10){
-		if (FDP_GetStateChanged(pFDP) == true){
-			FDP_State state;
-			if (FDP_GetState(pFDP, &state) == false){
-				printf("Failed to get state !\n");
-				return false;
-			}
-			if (state & FDP_STATE_BREAKPOINT_HIT
-				&& !(state & FDP_STATE_DEBUGGER_ALERTED)){
-				i++;
-				//FDP_State state = 0;
-				if (FDP_UnsetBreakpoint(pFDP, breakpointId) == false){
-					printf("Failed to remove page breakpoint !\n");
-					return false;
-				}
+        if (FDP_GetStateChanged(pFDP) == true){
+            FDP_State state;
+            if (FDP_GetState(pFDP, &state) == false){
+                printf("Failed to get state !\n");
+                return false;
+            }
+            if (state & FDP_STATE_BREAKPOINT_HIT
+                && !(state & FDP_STATE_DEBUGGER_ALERTED)){
+                i++;
+                //FDP_State state = 0;
+                if (FDP_UnsetBreakpoint(pFDP, breakpointId) == false){
+                    printf("Failed to remove page breakpoint !\n");
+                    return false;
+                }
 
-				if (FDP_SingleStep(pFDP, 0) == false){
-					printf("Failed to single step !\n");
-				}
+                if (FDP_SingleStep(pFDP, 0) == false){
+                    printf("Failed to single step !\n");
+                }
 
-				breakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_PAGEHBP, -1, FDP_EXECUTE_BP, FDP_PHYSICAL_ADDRESS, physicalLSTAR, 4096 * 30);
-				if (breakpointId < 0){
-					printf("Failed to insert page breakpoint !\n");
-					return false;
-				}
+                breakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_PAGEHBP, -1, FDP_EXECUTE_BP, FDP_PHYSICAL_ADDRESS, physicalLSTAR, 4096 * 30);
+                if (breakpointId < 0){
+                    printf("Failed to insert page breakpoint !\n");
+                    return false;
+                }
 
-				if (FDP_Resume(pFDP) == false){
-					printf("Failed to resume !\n");
-					return false;
-				}
-			}
-		}
+                if (FDP_Resume(pFDP) == false){
+                    printf("Failed to resume !\n");
+                    return false;
+                }
+            }
+        }
     }
 
     if (FDP_Pause(pFDP) == false){
@@ -814,10 +814,10 @@ bool testLargePhysicalPageSyscallBP(FDP_SHM* pFDP)
         return false;
     }
 
-	if (FDP_Resume(pFDP) == false){
-		printf("Failed to resume !\n");
-		return false;
-	}
+    if (FDP_Resume(pFDP) == false){
+        printf("Failed to resume !\n");
+        return false;
+    }
 
     printf("[OK]\n");
     return true;
@@ -1006,24 +1006,24 @@ bool testDebugRegisters(FDP_SHM* pFDP){
 
     TimerOut = false;
     TimerGo = true;
-	TimerSetDelay(5);
+    TimerSetDelay(5);
     uint64_t i = 0;
     while (TimerOut == false){
         if (FDP_GetStateChanged(pFDP) == true){
-			FDP_State state;
-			if (FDP_GetState(pFDP, &state) == false){
-				printf("Failed to FDP_GetState !\n");
-				return false;
-			}
-			if (state & FDP_STATE_BREAKPOINT_HIT){
-				i++;
-				if (FDP_SingleStep(pFDP, 0) == false){
-					return false;
-				}
-				if (FDP_Resume(pFDP) == false){
-					return false;
-				}
-			}
+            FDP_State state;
+            if (FDP_GetState(pFDP, &state) == false){
+                printf("Failed to FDP_GetState !\n");
+                return false;
+            }
+            if (state & FDP_STATE_BREAKPOINT_HIT){
+                i++;
+                if (FDP_SingleStep(pFDP, 0) == false){
+                    return false;
+                }
+                if (FDP_Resume(pFDP) == false){
+                    return false;
+                }
+            }
         }
     }
 
@@ -1039,7 +1039,7 @@ bool testDebugRegisters(FDP_SHM* pFDP){
         return false;
     }
 
-	int BreakpointPerSecond = (int)i / TimerGetDelay();
+    int BreakpointPerSecond = (int)i / TimerGetDelay();
     printf("[OK] %d/s\n", BreakpointPerSecond);
     return true;
 }
@@ -1182,11 +1182,11 @@ bool testSaveRestore(FDP_SHM* pFDP)
         return false;
     }
 
-	uint64_t OriginalRipValue;
-	if (FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &OriginalRipValue) == false){
-		printf("Failed to FDP_ReadRegister\n");
-		return false;
-	}
+    uint64_t OriginalRipValue;
+    if (FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &OriginalRipValue) == false){
+        printf("Failed to FDP_ReadRegister\n");
+        return false;
+    }
 
     if (FDP_Resume(pFDP) == false){
         printf("Failed to resume !\n");
@@ -1194,7 +1194,7 @@ bool testSaveRestore(FDP_SHM* pFDP)
     }
 
     for (int i = 0; i < 10; i++){
-		//Random Sleep
+        //Random Sleep
         Sleep(__rdtsc()%3000);
 
         if (FDP_Restore(pFDP) == false){
@@ -1202,16 +1202,16 @@ bool testSaveRestore(FDP_SHM* pFDP)
             return false;
         }
 
-		uint64_t NewRipValue;
-		if (FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &NewRipValue) == false){
-			printf("Failed to FDP_ReadRegister\n");
-			return false;
-		}
+        uint64_t NewRipValue;
+        if (FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &NewRipValue) == false){
+            printf("Failed to FDP_ReadRegister\n");
+            return false;
+        }
 
-		if (OriginalRipValue != NewRipValue){
-			printf("OriginalRipValue != NewRipValue\n");
-			return false;
-		}
+        if (OriginalRipValue != NewRipValue){
+            printf("OriginalRipValue != NewRipValue\n");
+            return false;
+        }
 
         if (FDP_Resume(pFDP) == false){
             printf("Failed to FDP_Resume !\n");
@@ -1219,7 +1219,7 @@ bool testSaveRestore(FDP_SHM* pFDP)
 
         }
 
-		//Wait for Rip change
+        //Wait for Rip change
         uint64_t OldRipValue;
         uint64_t RipValue;
         FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &OldRipValue);
@@ -1232,10 +1232,10 @@ bool testSaveRestore(FDP_SHM* pFDP)
         
     }
 
-	if (FDP_Resume(pFDP) == false){
-		printf("Failed to FDP_Resume !\n");
-		return false;
-	}
+    if (FDP_Resume(pFDP) == false){
+        printf("Failed to FDP_Resume !\n");
+        return false;
+    }
 
     printf("[OK]\n");
     return true;
@@ -1243,35 +1243,35 @@ bool testSaveRestore(FDP_SHM* pFDP)
 
 bool testReadAllPhysicalMemory(FDP_SHM* pFDP)
 {
-	printf("%s ...", __FUNCTION__);
+    printf("%s ...", __FUNCTION__);
 
-	uint64_t PhysicalAddress = 0;
-	char Buffer[4096];
-	uint64_t PhysicalMaxAddress = 0;
+    uint64_t PhysicalAddress = 0;
+    char Buffer[4096];
+    uint64_t PhysicalMaxAddress = 0;
 
-	if (FDP_Pause(pFDP) == false){
-		printf("Failed to pause !\n");
-		return false;
-	}
-	if (FDP_GetPhysicalMemorySize(pFDP, &PhysicalMaxAddress) == false){
-		printf("Failed to FDP_GetPhysicalMemorySize\n");
-		return false;
-	}
-	while (PhysicalAddress < PhysicalMaxAddress){
-		if (FDP_ReadPhysicalMemory(pFDP, Buffer, sizeof(Buffer), PhysicalAddress) == false){
-			//Some PhysicalAddress aren't readeable
-			//printf("Failed to FDP_ReadPhysicalMemory (%p)\n", PhysicalAddress);
-			//return false;
-		}
-		PhysicalAddress += sizeof(Buffer);
-	}
-	if (FDP_Resume(pFDP) == false){
-		printf("Failed to resume !\n");
-		return false;
-	}
+    if (FDP_Pause(pFDP) == false){
+        printf("Failed to pause !\n");
+        return false;
+    }
+    if (FDP_GetPhysicalMemorySize(pFDP, &PhysicalMaxAddress) == false){
+        printf("Failed to FDP_GetPhysicalMemorySize\n");
+        return false;
+    }
+    while (PhysicalAddress < PhysicalMaxAddress){
+        if (FDP_ReadPhysicalMemory(pFDP, Buffer, sizeof(Buffer), PhysicalAddress) == false){
+            //Some PhysicalAddress aren't readeable
+            //printf("Failed to FDP_ReadPhysicalMemory (%p)\n", PhysicalAddress);
+            //return false;
+        }
+        PhysicalAddress += sizeof(Buffer);
+    }
+    if (FDP_Resume(pFDP) == false){
+        printf("Failed to resume !\n");
+        return false;
+    }
 
-	printf("[OK]\n");
-	return true;
+    printf("[OK]\n");
+    return true;
 }
 
 
@@ -1575,101 +1575,101 @@ bool testSetCr3(FDP_SHM* pFDP)
 
 bool testSingleStepPageBreakpoint(FDP_SHM* pFDP)
 {
-	printf("%s ...", __FUNCTION__);
-	bool bReturnValue = false;
+    printf("%s ...", __FUNCTION__);
+    bool bReturnValue = false;
 
-	//Bug single-step PageHyperBreakpoint
-	FDP_Pause(pFDP);
+    //Bug single-step PageHyperBreakpoint
+    FDP_Pause(pFDP);
 
-	uint64_t originalMSRValue;
-	if (FDP_ReadMsr(pFDP, 0, MSR_LSTAR, &originalMSRValue) == false) {
-		printf("Failed to read MSRValue !\n");
-		return false;
-	}
+    uint64_t originalMSRValue;
+    if (FDP_ReadMsr(pFDP, 0, MSR_LSTAR, &originalMSRValue) == false) {
+        printf("Failed to read MSRValue !\n");
+        return false;
+    }
 
-	int BreakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_PAGEHBP, -1, FDP_EXECUTE_BP, FDP_VIRTUAL_ADDRESS, originalMSRValue, 1);
-	if (BreakpointId < 0) {
-		printf("Failed to insert page breakpoint !\n");
-		return false;
-	}
+    int BreakpointId = FDP_SetBreakpoint(pFDP, 0, FDP_PAGEHBP, -1, FDP_EXECUTE_BP, FDP_VIRTUAL_ADDRESS, originalMSRValue, 1);
+    if (BreakpointId < 0) {
+        printf("Failed to insert page breakpoint !\n");
+        return false;
+    }
 
-	if (FDP_Resume(pFDP) == false) {
-		printf("Failed to resume !\n");
-		return false;
-	}
+    if (FDP_Resume(pFDP) == false) {
+        printf("Failed to resume !\n");
+        return false;
+    }
 
-	bool bRunning = true;
-	while (bRunning == true) {
-		if (FDP_GetStateChanged(pFDP)) {
-			FDP_State state;
-			if (FDP_GetState(pFDP, &state) == false) {
-				printf("Failed to get state !\n");
-				return false;
-			}
-			if (state & FDP_STATE_PAUSED
-				&& state & FDP_STATE_BREAKPOINT_HIT
-				&& !(state & FDP_STATE_DEBUGGER_ALERTED)) {
-				break;
-			}
-		}
-	}
+    bool bRunning = true;
+    while (bRunning == true) {
+        if (FDP_GetStateChanged(pFDP)) {
+            FDP_State state;
+            if (FDP_GetState(pFDP, &state) == false) {
+                printf("Failed to get state !\n");
+                return false;
+            }
+            if (state & FDP_STATE_PAUSED
+                && state & FDP_STATE_BREAKPOINT_HIT
+                && !(state & FDP_STATE_DEBUGGER_ALERTED)) {
+                break;
+            }
+        }
+    }
 
-	uint64_t OldRip;
-	FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &OldRip);
-	FDP_SingleStep(pFDP, 0);
-	uint64_t NewRip;
-	FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &NewRip);
-	if (OldRip == NewRip) {
-		bReturnValue = false;
-	}
-	else {
-		bReturnValue = true;
-	}
+    uint64_t OldRip;
+    FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &OldRip);
+    FDP_SingleStep(pFDP, 0);
+    uint64_t NewRip;
+    FDP_ReadRegister(pFDP, 0, FDP_RIP_REGISTER, &NewRip);
+    if (OldRip == NewRip) {
+        bReturnValue = false;
+    }
+    else {
+        bReturnValue = true;
+    }
 
-	FDP_Pause(pFDP);
-	FDP_UnsetBreakpoint(pFDP, BreakpointId);
-	FDP_Resume(pFDP);
-	if (bReturnValue == true) {
-		printf("[OK]\n");
-	}
-	else {
-		printf("[FAIL]\n");
-	}
-	return bReturnValue;
+    FDP_Pause(pFDP);
+    FDP_UnsetBreakpoint(pFDP, BreakpointId);
+    FDP_Resume(pFDP);
+    if (bReturnValue == true) {
+        printf("[OK]\n");
+    }
+    else {
+        printf("[FAIL]\n");
+    }
+    return bReturnValue;
 }
 
 bool testSingleStepPause(FDP_SHM* pFDP)
 {
-	printf("%s ...", __FUNCTION__);
+    printf("%s ...", __FUNCTION__);
 
-	FDP_Resume(pFDP);
-	FDP_SingleStep(pFDP, 0);
-	printf("[OK]\n");
+    FDP_Resume(pFDP);
+    FDP_SingleStep(pFDP, 0);
+    printf("[OK]\n");
 
-	return true;
+    return true;
 }
 
 
 
 
 int testFDP(char *pVMName) {
-	bool bReturnCode = false;
-	FDP_SHM* pFDP = FDP_OpenSHM(pVMName);
-	if (pFDP) {
-		//Start Timer Thread
-		CreateThread(NULL, 0, TimerRoutine, NULL, 0, NULL);
+    bool bReturnCode = false;
+    FDP_SHM* pFDP = FDP_OpenSHM(pVMName);
+    if (pFDP) {
+        //Start Timer Thread
+        CreateThread(NULL, 0, TimerRoutine, NULL, 0, NULL);
 
-		if (FDP_Init(pFDP) == false) {
-			printf("Failed to FDP_Init !\n");
-			goto Fail;
-		}
+        if (FDP_Init(pFDP) == false) {
+            printf("Failed to FDP_Init !\n");
+            goto Fail;
+        }
 
-		if (testUnsetBreakpoint(pFDP) == false)
-			goto Fail;
-		if (testSingleStepPause(pFDP) == false)
-			goto Fail;
-		if (testSingleStepPageBreakpoint(pFDP) == false)
-			goto Fail;
+        if (testUnsetBreakpoint(pFDP) == false)
+            goto Fail;
+        if (testSingleStepPause(pFDP) == false)
+            goto Fail;
+        if (testSingleStepPageBreakpoint(pFDP) == false)
+            goto Fail;
         if (testSingleStepSpeed(pFDP) == false)
             goto Fail;
         if (testReadWriteMSR(pFDP) == false)
@@ -1694,16 +1694,16 @@ int testFDP(char *pVMName) {
             goto Fail;
         if (testGetStatePerformance(pFDP) == false)
             goto Fail;
-		if (testDebugRegisters(pFDP) == false)
-			goto Fail;
+        if (testDebugRegisters(pFDP) == false)
+            goto Fail;
         if (testVirtualSyscallBP(pFDP, FDP_PAGEHBP) == false)
             goto Fail;
         if (testVirtualSyscallBP(pFDP, FDP_SOFTHBP) == false)
             goto Fail;
         if (testPhysicalSyscallBP(pFDP, FDP_PAGEHBP) == false)
             goto Fail;
-		if (testPhysicalSyscallBP(pFDP, FDP_SOFTHBP) == false)
-			goto Fail;
+        if (testPhysicalSyscallBP(pFDP, FDP_SOFTHBP) == false)
+            goto Fail;
         if (testMultipleVirtualSyscallBP(pFDP, FDP_PAGEHBP) == false)
             goto Fail;
         if (testMultipleVirtualSyscallBP(pFDP, FDP_SOFTHBP) == false)
@@ -1712,22 +1712,22 @@ int testFDP(char *pVMName) {
             goto Fail;
         if (testMultiplePhysicalSyscallBP(pFDP, FDP_SOFTHBP) == false)
             goto Fail;
-		if (testReadAllPhysicalMemory(pFDP) == false)
-			goto Fail;
+        if (testReadAllPhysicalMemory(pFDP) == false)
+            goto Fail;
         if (testReadWriteAllPhysicalMemory(pFDP) == false)
             goto Fail;
         if (testLargeVirtualPageSyscallBP(pFDP) == false)
             goto Fail;
         if (testLargePhysicalPageSyscallBP(pFDP) == false)
             goto Fail;
-		if (testReadWriteVirtualMemorySpeed(pFDP) == false)
-			goto Fail;
-		if (testReadWritePhysicalMemorySpeed(pFDP) == false)
-			goto Fail;
-		if (testReadLargePhysicalMemory(pFDP) == false)
-			goto Fail;
-		if (testReadLargeVirtualMemory(pFDP) == false)
-			goto Fail;
+        if (testReadWriteVirtualMemorySpeed(pFDP) == false)
+            goto Fail;
+        if (testReadWritePhysicalMemorySpeed(pFDP) == false)
+            goto Fail;
+        if (testReadLargePhysicalMemory(pFDP) == false)
+            goto Fail;
+        if (testReadLargeVirtualMemory(pFDP) == false)
+            goto Fail;
         /*if (testSaveRestore(pFDP) == false)
             goto Fail;*/
 
@@ -1741,10 +1741,10 @@ int testFDP(char *pVMName) {
     printf("*********************\n");
     if (bReturnCode == false){
         printf("**  TESTS FAILED !  **\n");
-	}
+    }
     else{
         printf("** TESTS PASSED !  **\n");
-	}
+    }
     printf("*********************\n");
     printf("*********************\n");
     return bReturnCode;
@@ -1752,5 +1752,5 @@ int testFDP(char *pVMName) {
 
 
 void main(int argc, char *argv[]){
-	testFDP(argv[1]);
+    testFDP(argv[1]);
 }

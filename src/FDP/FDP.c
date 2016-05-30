@@ -57,66 +57,66 @@ __inline static void UnlockSHM(FDP_SHM_SHARED *FDPShm)
 
 static bool WriteFDPDataWithStatus(FDP_SHM_CANAL *pFDPCanal, uint8_t *pData, uint32_t DataSize, bool bStatus)
 {
-	bool dataWritten = false;
-	if (DataSize > FDP_MAX_DATA_SIZE){
-		return false;
-	}
-	do{
-		ttas_spinlock_lock(&pFDPCanal->lock);
-		if (pFDPCanal->bDataPresent == false){
-			memcpy((char*)pFDPCanal->data, pData, DataSize);
-			pFDPCanal->bDataPresent = true;
-			pFDPCanal->dataSize = DataSize;
-			pFDPCanal->bStatus = bStatus;
-			dataWritten = true;
-		}
-		ttas_spinlock_unlock(&pFDPCanal->lock);
-	} while (dataWritten == false);
-	return true;
+    bool dataWritten = false;
+    if (DataSize > FDP_MAX_DATA_SIZE){
+        return false;
+    }
+    do{
+        ttas_spinlock_lock(&pFDPCanal->lock);
+        if (pFDPCanal->bDataPresent == false){
+            memcpy((char*)pFDPCanal->data, pData, DataSize);
+            pFDPCanal->bDataPresent = true;
+            pFDPCanal->dataSize = DataSize;
+            pFDPCanal->bStatus = bStatus;
+            dataWritten = true;
+        }
+        ttas_spinlock_unlock(&pFDPCanal->lock);
+    } while (dataWritten == false);
+    return true;
 }
 
 static bool WriteFDPData(FDP_SHM_CANAL *pFDPCanal, uint8_t *pData, uint32_t DataSize)
 {
-	return WriteFDPDataWithStatus(pFDPCanal, pData, DataSize, true);
+    return WriteFDPDataWithStatus(pFDPCanal, pData, DataSize, true);
 }
 
 static uint32_t ReadFDPDataWithStatus(FDP_SHM_CANAL *pFDPCanal, uint8_t *buffer, bool *pbStatus)
 {
-	bool dataRead = false;
-	uint32_t dataReadSize = 0;
-	uint32_t readTry = 0;
-	do{
-		if (pFDPCanal->bDataPresent) {
-			ttas_spinlock_lock(&pFDPCanal->lock);
-			if (pFDPCanal->bDataPresent){ //Verification
-				if (pFDPCanal->dataSize < FDP_MAX_DATA_SIZE){
-					memcpy(buffer, (char *)pFDPCanal->data, pFDPCanal->dataSize);
-				}
-				pFDPCanal->bDataPresent = false; //All data is read !
-				dataRead = true;
-				dataReadSize = pFDPCanal->dataSize;
-				*pbStatus = pFDPCanal->bStatus;
-				readTry = 0;
-			}
-			ttas_spinlock_unlock(&pFDPCanal->lock);
-		}
+    bool dataRead = false;
+    uint32_t dataReadSize = 0;
+    uint32_t readTry = 0;
+    do{
+        if (pFDPCanal->bDataPresent) {
+            ttas_spinlock_lock(&pFDPCanal->lock);
+            if (pFDPCanal->bDataPresent){ //Verification
+                if (pFDPCanal->dataSize < FDP_MAX_DATA_SIZE){
+                    memcpy(buffer, (char *)pFDPCanal->data, pFDPCanal->dataSize);
+                }
+                pFDPCanal->bDataPresent = false; //All data is read !
+                dataRead = true;
+                dataReadSize = pFDPCanal->dataSize;
+                *pbStatus = pFDPCanal->bStatus;
+                readTry = 0;
+            }
+            ttas_spinlock_unlock(&pFDPCanal->lock);
+        }
 
-		if ((readTry & 0xFFFFFF) == 0xFFFFFF){
+        if ((readTry & 0xFFFFFF) == 0xFFFFFF){
 #if FDP_POWER_SAVE == 1
-			Sleep(10);
+            Sleep(10);
 #endif
-		}
-		else{
-			readTry++;
-		}
-	} while (dataRead == false);
-	return dataReadSize;
+        }
+        else{
+            readTry++;
+        }
+    } while (dataRead == false);
+    return dataReadSize;
 }
 
 __inline static uint32_t ReadFDPData(FDP_SHM_CANAL *pFDPCanal, uint8_t *buffer)
 {
-	bool bIsSuccess;
-	return ReadFDPDataWithStatus(pFDPCanal, buffer, &bIsSuccess);
+    bool bIsSuccess;
+    return ReadFDPDataWithStatus(pFDPCanal, buffer, &bIsSuccess);
 }
 
 FDP_EXPORTED
@@ -181,11 +181,11 @@ FDP_EXPORTED FDP_SHM* FDP_OpenSHM(const char *shmName)
     }
 
     FDP_SHM *pFDPSHM = (FDP_SHM*)malloc(sizeof(FDP_SHM));
-	if (pFDPSHM == NULL){
+    if (pFDPSHM == NULL){
 
-		CloseHandle(hMapFile);
-		return NULL;
-	}
+        CloseHandle(hMapFile);
+        return NULL;
+    }
     pFDPSHM->pSharedFDPSHM = (FDP_SHM_SHARED*)pBuf;
     return pFDPSHM;
 }
@@ -194,9 +194,9 @@ FDP_EXPORTED FDP_SHM* FDP_OpenSHM(const char *shmName)
 FDP_EXPORTED
 bool FDP_Pause(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     uint32_t InputBufferSize = 0;
 
@@ -217,9 +217,9 @@ bool FDP_Pause(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_Resume(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     uint32_t InputBufferSize = 0;
 
@@ -240,9 +240,9 @@ bool FDP_Resume(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_Reboot(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     uint32_t InputBufferSize = 0;
 
@@ -262,40 +262,40 @@ bool FDP_Reboot(FDP_SHM *pFDP)
 
 bool FDP_ReadPhysicalMemoryInternal(FDP_SHM *pFDP, uint8_t *pDstBuffer, uint32_t ReadSize, uint64_t PhysicalAddress)
 {
-	uint64_t ReceivedSize = 0;
-	bool bReturnCode = false;
-	FDP_READ_PHYSICAL_MEMORY_PKT_REQ tmpPkt;
-	tmpPkt.Type = FDPCMD_READ_PHYSICAL;
-	tmpPkt.PhysicalAddress = PhysicalAddress;
-	tmpPkt.ReadSize = ReadSize;
+    uint64_t ReceivedSize = 0;
+    bool bReturnCode = false;
+    FDP_READ_PHYSICAL_MEMORY_PKT_REQ tmpPkt;
+    tmpPkt.Type = FDPCMD_READ_PHYSICAL;
+    tmpPkt.PhysicalAddress = PhysicalAddress;
+    tmpPkt.ReadSize = ReadSize;
 
-	LockSHM(pFDP->pSharedFDPSHM);
-	{
-		WriteFDPData(&pFDP->pSharedFDPSHM->ClientToServer, (uint8_t*)&tmpPkt, sizeof(FDP_READ_PHYSICAL_MEMORY_PKT_REQ));
+    LockSHM(pFDP->pSharedFDPSHM);
+    {
+        WriteFDPData(&pFDP->pSharedFDPSHM->ClientToServer, (uint8_t*)&tmpPkt, sizeof(FDP_READ_PHYSICAL_MEMORY_PKT_REQ));
 
-		ReceivedSize = ReadFDPDataWithStatus(&pFDP->pSharedFDPSHM->ServerToClient, pDstBuffer, &bReturnCode);
-	}
-	UnlockSHM(pFDP->pSharedFDPSHM);
+        ReceivedSize = ReadFDPDataWithStatus(&pFDP->pSharedFDPSHM->ServerToClient, pDstBuffer, &bReturnCode);
+    }
+    UnlockSHM(pFDP->pSharedFDPSHM);
 
-	return bReturnCode;
+    return bReturnCode;
 }
 
 FDP_EXPORTED
 bool FDP_ReadPhysicalMemory(FDP_SHM *pFDP, uint8_t *pDstBuffer, uint32_t ReadSize, uint64_t PhysicalAddress)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
-	uint32_t CurrentOffset = 0;
-	do{
-		uint32_t CurrentReadSize = MIN(ReadSize, FDP_MAX_DATA_SIZE - 1);
-		if (FDP_ReadPhysicalMemoryInternal(pFDP, pDstBuffer + CurrentOffset, CurrentReadSize, PhysicalAddress + CurrentOffset) == false){
-			return false;
-		}
-		CurrentOffset += CurrentReadSize;
-	} while (CurrentOffset < ReadSize);
+    if (pFDP == NULL) {
+        return false;
+    }
+    uint32_t CurrentOffset = 0;
+    do{
+        uint32_t CurrentReadSize = MIN(ReadSize, FDP_MAX_DATA_SIZE - 1);
+        if (FDP_ReadPhysicalMemoryInternal(pFDP, pDstBuffer + CurrentOffset, CurrentReadSize, PhysicalAddress + CurrentOffset) == false){
+            return false;
+        }
+        CurrentOffset += CurrentReadSize;
+    } while (CurrentOffset < ReadSize);
 
-	return true;
+    return true;
 }
 
 bool FDP_ReadVirtualMemoryInternal(FDP_SHM *pFDP, uint32_t CpuId, uint8_t *pDstBuffer, uint32_t ReadSize, uint64_t VirtualAddress)
@@ -323,42 +323,42 @@ bool FDP_ReadVirtualMemoryInternal(FDP_SHM *pFDP, uint32_t CpuId, uint8_t *pDstB
 FDP_EXPORTED
 bool FDP_ReadVirtualMemory(FDP_SHM *pFDP, uint32_t CpuId, uint8_t *pDstBuffer, uint32_t ReadSize, uint64_t VirtualAddress)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
-	uint32_t CurrentOffset = 0;
-	do{
-		uint32_t CurrentReadSize = MIN(ReadSize, FDP_MAX_DATA_SIZE - 1);
-		if (FDP_ReadVirtualMemoryInternal(pFDP, CpuId, pDstBuffer + CurrentOffset, CurrentReadSize, VirtualAddress + CurrentOffset) == false){
-			return false;
-		}
-		CurrentOffset += CurrentReadSize;
-	} while (CurrentOffset < ReadSize);
+    if (pFDP == NULL) {
+        return false;
+    }
+    uint32_t CurrentOffset = 0;
+    do{
+        uint32_t CurrentReadSize = MIN(ReadSize, FDP_MAX_DATA_SIZE - 1);
+        if (FDP_ReadVirtualMemoryInternal(pFDP, CpuId, pDstBuffer + CurrentOffset, CurrentReadSize, VirtualAddress + CurrentOffset) == false){
+            return false;
+        }
+        CurrentOffset += CurrentReadSize;
+    } while (CurrentOffset < ReadSize);
 
-	return true;
+    return true;
 }
 
 FDP_EXPORTED
 bool FDP_WritePhysicalMemory(FDP_SHM *pFDP, uint8_t *pSrcBuffer, uint32_t WriteSize, uint64_t PhysicalAddress)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint32_t InputBufferSize = 0;
     bool bReturnValue = false;
 
     LockSHM(pFDP->pSharedFDPSHM);
     {
-		FDP_WRITE_PHYSICAL_MEMORY_PKT_REQ *TempPkt = (FDP_WRITE_PHYSICAL_MEMORY_PKT_REQ *)pFDP->OutputBuffer;
-		TempPkt->Type = FDPCMD_WRITE_PHYSICAL;
-		TempPkt->PhysicalAddress = PhysicalAddress;
-		TempPkt->WriteSize = WriteSize;
-		if (WriteSize < FDP_MAX_DATA_SIZE - sizeof(*TempPkt)){
-			memcpy(TempPkt->Data, pSrcBuffer, WriteSize);
-			WriteFDPData(&pFDP->pSharedFDPSHM->ClientToServer, (uint8_t*)TempPkt, sizeof(FDP_READ_PHYSICAL_MEMORY_PKT_REQ) + WriteSize);
+        FDP_WRITE_PHYSICAL_MEMORY_PKT_REQ *TempPkt = (FDP_WRITE_PHYSICAL_MEMORY_PKT_REQ *)pFDP->OutputBuffer;
+        TempPkt->Type = FDPCMD_WRITE_PHYSICAL;
+        TempPkt->PhysicalAddress = PhysicalAddress;
+        TempPkt->WriteSize = WriteSize;
+        if (WriteSize < FDP_MAX_DATA_SIZE - sizeof(*TempPkt)){
+            memcpy(TempPkt->Data, pSrcBuffer, WriteSize);
+            WriteFDPData(&pFDP->pSharedFDPSHM->ClientToServer, (uint8_t*)TempPkt, sizeof(FDP_READ_PHYSICAL_MEMORY_PKT_REQ) + WriteSize);
 
-			InputBufferSize = ReadFDPData(&pFDP->pSharedFDPSHM->ServerToClient, (uint8_t*)&bReturnValue);
-		}
+            InputBufferSize = ReadFDPData(&pFDP->pSharedFDPSHM->ServerToClient, (uint8_t*)&bReturnValue);
+        }
     }
     UnlockSHM(pFDP->pSharedFDPSHM);
 
@@ -369,9 +369,9 @@ bool FDP_WritePhysicalMemory(FDP_SHM *pFDP, uint8_t *pSrcBuffer, uint32_t WriteS
 FDP_EXPORTED
 bool FDP_WriteVirtualMemory(FDP_SHM *pFDP, uint32_t CpuId, uint8_t *pSrcBuffer, uint32_t WriteSize, uint64_t VirtualAddress)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     uint32_t InputBufferSize = 0;
 
@@ -383,13 +383,13 @@ bool FDP_WriteVirtualMemory(FDP_SHM *pFDP, uint32_t CpuId, uint8_t *pSrcBuffer, 
         TempPkt->VirtualAddress = VirtualAddress;
         TempPkt->WriteSize = WriteSize;
 
-		if (WriteSize < FDP_MAX_DATA_SIZE - sizeof(*TempPkt)){
-			memcpy(TempPkt->Data, pSrcBuffer, WriteSize);
+        if (WriteSize < FDP_MAX_DATA_SIZE - sizeof(*TempPkt)){
+            memcpy(TempPkt->Data, pSrcBuffer, WriteSize);
 
-			WriteFDPData(&pFDP->pSharedFDPSHM->ClientToServer, pFDP->OutputBuffer, sizeof(FDP_WRITE_VIRTUAL_MEMORY_PKT_REQ) + WriteSize);
+            WriteFDPData(&pFDP->pSharedFDPSHM->ClientToServer, pFDP->OutputBuffer, sizeof(FDP_WRITE_VIRTUAL_MEMORY_PKT_REQ) + WriteSize);
 
-			InputBufferSize = ReadFDPData(&pFDP->pSharedFDPSHM->ServerToClient, (uint8_t*)&bReturnValue);
-		}
+            InputBufferSize = ReadFDPData(&pFDP->pSharedFDPSHM->ServerToClient, (uint8_t*)&bReturnValue);
+        }
     }
     UnlockSHM(pFDP->pSharedFDPSHM);
 
@@ -399,9 +399,9 @@ bool FDP_WriteVirtualMemory(FDP_SHM *pFDP, uint32_t CpuId, uint8_t *pSrcBuffer, 
 FDP_EXPORTED
 uint64_t FDP_SearchPhysicalMemory(FDP_SHM *pFDP, const void *pPatternData, uint32_t PatternSize, uint64_t StartOffset)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint64_t FoundAddress = 0x0;
 
     LockSHM(pFDP->pSharedFDPSHM);
@@ -425,9 +425,9 @@ uint64_t FDP_SearchPhysicalMemory(FDP_SHM *pFDP, const void *pPatternData, uint3
 FDP_EXPORTED
 bool FDP_SearchVirtualMemory(FDP_SHM *pFDP, uint32_t CpuId, const void *pPatternData, uint32_t PatternSize, uint64_t StartOffset)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint64_t FoundAddress = 0x0;
     bool bReturnCode = false;
     LockSHM(pFDP->pSharedFDPSHM);
@@ -452,9 +452,9 @@ bool FDP_SearchVirtualMemory(FDP_SHM *pFDP, uint32_t CpuId, const void *pPattern
 FDP_EXPORTED
 bool FDP_ReadRegister(FDP_SHM *pFDP, uint32_t CpuId, FDP_Register RegisterId, uint64_t *pRegisterValue)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     FDP_READ_REGISTER_PKT_REQ TempPkt;
     TempPkt.Type = FDPCMD_READ_REGISTER;
     TempPkt.CpuId = CpuId;
@@ -474,9 +474,9 @@ bool FDP_ReadRegister(FDP_SHM *pFDP, uint32_t CpuId, FDP_Register RegisterId, ui
 FDP_EXPORTED
 bool FDP_ReadMsr(FDP_SHM *pFDP, uint32_t CpuId, uint64_t MsrId, uint64_t *pMsrValue)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     FDP_READ_MSR_PKT_REQ TempPkt;
     TempPkt.Type = FDPCMD_READ_MSR;
     TempPkt.CpuId = CpuId;
@@ -496,9 +496,9 @@ bool FDP_ReadMsr(FDP_SHM *pFDP, uint32_t CpuId, uint64_t MsrId, uint64_t *pMsrVa
 FDP_EXPORTED
 bool FDP_WriteMsr(FDP_SHM *pFDP, uint32_t CpuId, uint64_t MsrId, uint64_t MsrValue)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     uint32_t InputBufferSize = 0;
 
@@ -522,9 +522,9 @@ bool FDP_WriteMsr(FDP_SHM *pFDP, uint32_t CpuId, uint64_t MsrId, uint64_t MsrVal
 FDP_EXPORTED
 bool FDP_WriteRegister(FDP_SHM *pFDP, uint32_t CpuId, FDP_Register RegisterId, uint64_t RegisterValue)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint32_t InputBufferSize = 0;
     bool bReturnValue = false;
 
@@ -549,9 +549,9 @@ bool FDP_WriteRegister(FDP_SHM *pFDP, uint32_t CpuId, FDP_Register RegisterId, u
 FDP_EXPORTED
 bool FDP_UnsetBreakpoint(FDP_SHM *pFDP, uint8_t BreakpointId)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint32_t InputBufferSize = 0;
     bool bReturnValue = false;
 
@@ -582,9 +582,9 @@ int FDP_SetBreakpoint(
     uint64_t BreakpointAddress,
     uint64_t BreakpointLength)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint32_t InputBufferSize = 0;
     int iReturnedBreakpointId;
 
@@ -612,9 +612,9 @@ int FDP_SetBreakpoint(
 FDP_EXPORTED
 bool FDP_VirtualToPhysical(FDP_SHM *pFDP, uint32_t CpuId, uint64_t VirtualAddress, uint64_t *PhysicalAddress)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     FDP_VIRTUAL_PHYSICAL_PKT_REQ TempPkt;
     TempPkt.Type = FDPCMD_VIRTUAL_PHYSICAL;
     TempPkt.CpuId = CpuId;
@@ -634,9 +634,9 @@ bool FDP_VirtualToPhysical(FDP_SHM *pFDP, uint32_t CpuId, uint64_t VirtualAddres
 FDP_EXPORTED
 bool FDP_GetState(FDP_SHM *pFDP, FDP_State *DebuggeeState)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     FDP_GET_STATE_PKT_REQ TempPkt;
     TempPkt.Type = FDPCMD_GET_STATE;
 
@@ -654,9 +654,9 @@ bool FDP_GetState(FDP_SHM *pFDP, FDP_State *DebuggeeState)
 FDP_EXPORTED
 bool FDP_Init(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = true;
 
     memset(pFDP->pSharedFDPSHM, 0, FDP_SHM_SHARED_SIZE);
@@ -667,9 +667,9 @@ bool FDP_Init(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_SingleStep(FDP_SHM *pFDP, uint32_t CpuId)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     uint32_t InputBufferSize = 0;
 
@@ -690,9 +690,9 @@ bool FDP_SingleStep(FDP_SHM *pFDP, uint32_t CpuId)
 
 uint8_t FDP_Test(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint8_t DebuggeState;
     FDP_GET_STATE_PKT_REQ* tmpPkt = (FDP_GET_STATE_PKT_REQ*)pFDP->OutputBuffer;
     tmpPkt->Type = FDPCMD_TEST;
@@ -712,9 +712,9 @@ uint8_t FDP_Test(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_GetFxState64(FDP_SHM *pFDP, uint32_t CpuId, FDP_XSAVE_FORMAT64_T* pFxState)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     FDP_GET_STATE_PKT_REQ* TempPkt = (FDP_GET_STATE_PKT_REQ*)pFDP->OutputBuffer;
     TempPkt->Type = FDPCMD_GET_FXSTATE;
     TempPkt->CpuId = CpuId;
@@ -733,9 +733,9 @@ bool FDP_GetFxState64(FDP_SHM *pFDP, uint32_t CpuId, FDP_XSAVE_FORMAT64_T* pFxSt
 FDP_EXPORTED
 bool FDP_SetFxState64(FDP_SHM *pFDP, uint32_t CpuId, FDP_XSAVE_FORMAT64_T* pFxState64)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     FDP_SET_FX_STATE_REQ* TempPkt = (FDP_SET_FX_STATE_REQ*)pFDP->OutputBuffer;
     TempPkt->Type = FDPCMD_SET_FXSTATE;
@@ -757,9 +757,9 @@ bool FDP_SetFxState64(FDP_SHM *pFDP, uint32_t CpuId, FDP_XSAVE_FORMAT64_T* pFxSt
 FDP_EXPORTED
 bool FDP_GetPhysicalMemorySize(FDP_SHM *pFDP, uint64_t *PhysicalMemorySize)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = true;
     uint32_t InputBufferSize = 0;
 
@@ -774,16 +774,16 @@ bool FDP_GetPhysicalMemorySize(FDP_SHM *pFDP, uint64_t *PhysicalMemorySize)
     }
     UnlockSHM(pFDP->pSharedFDPSHM);
     //TODO return bool !
-	return bReturnValue;
+    return bReturnValue;
 }
 
 
 FDP_EXPORTED
 bool FDP_GetCpuCount(FDP_SHM *pFDP, uint32_t *CPUCount)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = true;
     uint32_t InputBufferSize = 0;
 
@@ -798,15 +798,15 @@ bool FDP_GetCpuCount(FDP_SHM *pFDP, uint32_t *CPUCount)
     }
     UnlockSHM(pFDP->pSharedFDPSHM);
 
-	return bReturnValue;
+    return bReturnValue;
 }
 
 FDP_EXPORTED
 bool FDP_GetCpuState(FDP_SHM *pFDP, uint32_t CpuId, FDP_State *pDebuggeeState)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
 
     FDP_GET_CPU_STATE_PKT_REQ TempPkt;
     TempPkt.Type = FDPCMD_GET_CPU_STATE;
@@ -826,9 +826,9 @@ bool FDP_GetCpuState(FDP_SHM *pFDP, uint32_t CpuId, FDP_State *pDebuggeeState)
 FDP_EXPORTED
 bool FDP_Save(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
 
     FDP_SIMPLE_PKT_REQ TempPkt;
@@ -848,9 +848,9 @@ bool FDP_Save(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_Restore(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
 
     FDP_SIMPLE_PKT_REQ TempPkt;
@@ -870,9 +870,9 @@ bool FDP_Restore(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_GetStateChanged(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool StateChanged;
     //LockSHM(pFDP->pSharedFDPSHM);
     ttas_spinlock_lock(&pFDP->pSharedFDPSHM->stateChangedLock);
@@ -888,9 +888,9 @@ bool FDP_GetStateChanged(FDP_SHM *pFDP)
 FDP_EXPORTED
 void FDP_SetStateChanged(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return;
-	}
+    if (pFDP == NULL) {
+        return;
+    }
     //LockSHM(pFDP->pSharedFDPSHM);
     ttas_spinlock_lock(&pFDP->pSharedFDPSHM->stateChangedLock);
     {
@@ -904,9 +904,9 @@ void FDP_SetStateChanged(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_InjectInterrupt(FDP_SHM *pFDP, uint32_t CpuId, uint32_t uInterruptionCode, uint32_t uErrorCode, uint64_t Cr2Value)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     bool bReturnValue = false;
     FDP_INJECT_INTERRUPT_PKT_REQ* tmpPkt = (FDP_INJECT_INTERRUPT_PKT_REQ*)pFDP->OutputBuffer;
     tmpPkt->Type = FDPCMD_INJECT_INTERRUPT;
@@ -932,9 +932,9 @@ bool FDP_InjectInterrupt(FDP_SHM *pFDP, uint32_t CpuId, uint32_t uInterruptionCo
 FDP_EXPORTED
 bool FDP_ServerLoop(FDP_SHM *pFDP)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     uint32_t u32InputBufferSize = 0;
     uint32_t u32OutputBuffersize = 0;
     pFDP->pFdpServer->bIsRunning = true;
@@ -1109,37 +1109,37 @@ bool FDP_ServerLoop(FDP_SHM *pFDP)
         case FDPCMD_READ_PHYSICAL:
         {
             FDP_READ_PHYSICAL_MEMORY_PKT_REQ* TempPkt = (FDP_READ_PHYSICAL_MEMORY_PKT_REQ*)pFDP->InputBuffer;
-			if (TempPkt->ReadSize > FDP_MAX_DATA_SIZE){
-				bStatus = false;
-			}
-			else{
-				bStatus = pFDP->pFdpServer->pfnReadPhysicalMemory(pFDP->pFdpServer->pUserHandle,
-					pFDP->OutputBuffer,
-					TempPkt->PhysicalAddress,
-					TempPkt->ReadSize);
-			}
+            if (TempPkt->ReadSize > FDP_MAX_DATA_SIZE){
+                bStatus = false;
+            }
+            else{
+                bStatus = pFDP->pFdpServer->pfnReadPhysicalMemory(pFDP->pFdpServer->pUserHandle,
+                    pFDP->OutputBuffer,
+                    TempPkt->PhysicalAddress,
+                    TempPkt->ReadSize);
+            }
 
-			if (bStatus){
-				u32OutputBuffersize = TempPkt->ReadSize;
-			}
-			else{
-				u32OutputBuffersize = 1;
-			}
+            if (bStatus){
+                u32OutputBuffersize = TempPkt->ReadSize;
+            }
+            else{
+                u32OutputBuffersize = 1;
+            }
             break;
         }
         case FDPCMD_READ_VIRTUAL:
         {
-			FDP_READ_VIRTUAL_MEMORY_PKT_REQ* TempPkt = (FDP_READ_VIRTUAL_MEMORY_PKT_REQ*)pFDP->InputBuffer;
-			if (TempPkt->ReadSize > FDP_MAX_DATA_SIZE){
-				bStatus = false;
-			}
-			else{
-				bStatus = pFDP->pFdpServer->pfnReadVirtualMemory(pFDP->pFdpServer->pUserHandle,
-					TempPkt->CpuId,
-					TempPkt->VirtualAddress,
-					TempPkt->ReadSize,
-					pFDP->OutputBuffer);
-			}
+            FDP_READ_VIRTUAL_MEMORY_PKT_REQ* TempPkt = (FDP_READ_VIRTUAL_MEMORY_PKT_REQ*)pFDP->InputBuffer;
+            if (TempPkt->ReadSize > FDP_MAX_DATA_SIZE){
+                bStatus = false;
+            }
+            else{
+                bStatus = pFDP->pFdpServer->pfnReadVirtualMemory(pFDP->pFdpServer->pUserHandle,
+                    TempPkt->CpuId,
+                    TempPkt->VirtualAddress,
+                    TempPkt->ReadSize,
+                    pFDP->OutputBuffer);
+            }
 
             if (bStatus){
                 u32OutputBuffersize = TempPkt->ReadSize;
@@ -1184,7 +1184,7 @@ bool FDP_ServerLoop(FDP_SHM *pFDP)
             u32OutputBuffersize = sizeof(bool);
             break;
         }
-		//TODO !
+        //TODO !
         case FDPCMD_SEARCH_PHYSICAL_MEMORY:
         {
             /*FDP_SEARCH_PHYSICAL_MEMORY_PKT_REQ* tmpPkt = (FDP_SEARCH_PHYSICAL_MEMORY_PKT_REQ*)pFDP->InputBuffer;
@@ -1221,9 +1221,9 @@ bool FDP_ServerLoop(FDP_SHM *pFDP)
 FDP_EXPORTED
 bool FDP_SetFDPServer(FDP_SHM *pFDP, FDP_SERVER_INTERFACE_T *pFDPServer)
 {
-	if (pFDP == NULL) {
-		return false;
-	}
+    if (pFDP == NULL) {
+        return false;
+    }
     pFDP->pFdpServer = pFDPServer;
     return true;
 }
